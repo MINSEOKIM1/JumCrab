@@ -76,6 +76,12 @@ public class PlayerBehavior : MonoBehaviour
 
     public bool touchingDescendingPlatform = false;
 
+    public int aniIdWalk;
+    public int aniIdGrounded;
+    public int aniIdJump;
+
+    public bool pause;
+
     public GameObject currentDescendingPlatform;
 
     private Vignette _vignette;
@@ -84,6 +90,8 @@ public class PlayerBehavior : MonoBehaviour
     private Collider2D _collider;
     private Rigidbody2D _rigidbody;
     private PlayerInputManager _playerInput;
+    private Animator _animator;
+    private SpriteRenderer _sprite;
 
     private SpriteRenderer[] _renderers;
 
@@ -92,6 +100,12 @@ public class PlayerBehavior : MonoBehaviour
         _collider = GetComponent<CapsuleCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInputManager>();
+        _animator = GetComponentInChildren<Animator>();
+        _sprite = GetComponentInChildren<SpriteRenderer>();
+
+        aniIdWalk = Animator.StringToHash("Walk");
+        aniIdGrounded = Animator.StringToHash("Grounded");
+        aniIdJump = Animator.StringToHash("Jump");
 
         _renderers = GetComponentsInChildren<SpriteRenderer>();
 
@@ -111,9 +125,20 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Update()
     {
+        if (pause) Time.timeScale = 0;
+        else Time.timeScale = 1;
+
+        if (_playerInput.pause)
+        {
+            pause = !pause;
+            _playerInput.pause = false;
+        }
+        
         _jumpTimeOutElapsed -= Time.deltaTime;
         _noDamageTimeElapsed -= Time.deltaTime;
         _coyoteTimeElapsed -= Time.deltaTime;
+        
+        if (_animator.GetCurrentAnimatorStateInfo(0).IsTag("jump")) _animator.SetBool(aniIdJump, false);
 
         if (touchingDescendingPlatform)
         {
@@ -123,6 +148,10 @@ public class PlayerBehavior : MonoBehaviour
         {
             Physics2D.IgnoreLayerCollision(3, 6, false);  // true: 충돌 무시, false: 충돌 허용
         }
+
+        if ((_sprite.flipX && _playerInput.move.x > 0) || (!_sprite.flipX && _playerInput.move.x < 0))
+            _sprite.flipX = !_sprite.flipX;
+        _animator.SetFloat(aniIdWalk, _playerInput.move.x == 0? 0: 1);
 
         Jump();
         RotateBody();
@@ -152,6 +181,10 @@ public class PlayerBehavior : MonoBehaviour
                 
                 // 특수 기믹 확인
                 SpecialPlatformCheck(raycastHit);
+                
+                // 애니메
+                if (_jumpTimeOutElapsed < 0) _animator.SetBool(aniIdGrounded, true);
+                _animator.SetBool(aniIdJump, false);
             } 
         }
         else
@@ -159,6 +192,9 @@ public class PlayerBehavior : MonoBehaviour
             if (_grounded)
             {
                 _grounded = false;
+                
+                // 애니메
+                _animator.SetBool(aniIdGrounded, false);
             }
 
             if (_coyoteTimeElapsed < 0)
@@ -171,19 +207,48 @@ public class PlayerBehavior : MonoBehaviour
 
     private void SpecialPlatformCheck(RaycastHit2D hit)
     {
-        if (hit.collider.GetComponent<VanshingPlatform>())
+        BoxCollider2D box = hit.collider as BoxCollider2D;
+        if (box != null)
         {
-            hit.collider.GetComponent<VanshingPlatform>().Vanishing();
+            // BoxCollider2D의 Bounds 가져오기
+            Bounds bounds = box.bounds;
+
+            // 충돌 지점
+            Vector2 hitPoint = hit.point;
+
+            // 외곽에 닿았는지 확인
+            if (IsPointOnBoundsEdge(hitPoint, bounds))
+            {
+                if (hit.collider.GetComponent<VanshingPlatform>())
+                {
+                    hit.collider.GetComponent<VanshingPlatform>().Vanishing();
+                }
+        
+                if (hit.collider.GetComponent<DescendingPlatform>())
+                {
+                    touchingDescendingPlatform = true;
+                    var a = hit.collider.GetComponent<DescendingPlatform>();
+                    currentDescendingPlatform = hit.transform.gameObject;
+                    currentDescendingPlatform.layer = 8;
+                    a.descending = true;
+                }
+            }
+            else
+            {
+                Debug.Log("Ray hit inside the BoxCollider2D");
+            }
         }
         
-        if (hit.collider.GetComponent<DescendingPlatform>())
-        {
-            touchingDescendingPlatform = true;
-            var a = hit.collider.GetComponent<DescendingPlatform>();
-            currentDescendingPlatform = hit.transform.gameObject;
-            currentDescendingPlatform.layer = 8;
-            a.descending = true;
-        }
+    }
+    
+    private bool IsPointOnBoundsEdge(Vector2 point, Bounds bounds)
+    {
+        // Bounds의 엣지 근처에 있는지 확인
+        float epsilon = 0.01f; // 작은 오차 허용값
+        bool onLeftOrRightEdge = Mathf.Abs(point.x - bounds.min.x) < epsilon || Mathf.Abs(point.x - bounds.max.x) < epsilon;
+        bool onTopOrBottomEdge = Mathf.Abs(point.y - bounds.min.y) < epsilon || Mathf.Abs(point.y - bounds.max.y) < epsilon;
+
+        return onLeftOrRightEdge || onTopOrBottomEdge;
     }
 
     private void WallCheck()
@@ -203,6 +268,7 @@ public class PlayerBehavior : MonoBehaviour
             if (!_isClimbing && _jumpTimeOutElapsed < 0)
             {
                 _isClimbing = true;
+                _animator.SetBool(aniIdGrounded, true);
                 _isClimbingLeftWall = _playerInput.move.x < 0;
             }
         }
@@ -285,6 +351,9 @@ public class PlayerBehavior : MonoBehaviour
                     _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
                     _rigidbody.AddForce(Vector2.up * actualJumpPower, ForceMode2D.Impulse);
                     _playerInput.jump = false;
+                    
+                    _animator.SetBool(aniIdGrounded, false);
+                    _animator.SetBool(aniIdJump, true);
                     touchingDescendingPlatform = false;
                     if (currentDescendingPlatform) currentDescendingPlatform.layer = 6;
                 }
@@ -298,6 +367,9 @@ public class PlayerBehavior : MonoBehaviour
                     _speed = _isClimbingLeftWall ? actualWallJumpPower : -actualWallJumpPower;
                     _isClimbing = false;
                     _playerInput.jump = false;
+                    
+                    _animator.SetBool(aniIdGrounded, false);
+                    _animator.SetBool(aniIdJump, true);
                 }
             }
         }

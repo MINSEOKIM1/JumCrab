@@ -10,6 +10,7 @@ public class HeighEstimate : MonoBehaviour
     public TMP_Text text;
 
     private float _startOffsetY;
+    private float _timeElapsed = 0.1f;
 
     private void Start()
     {
@@ -18,7 +19,10 @@ public class HeighEstimate : MonoBehaviour
 
     private void Update()
     {
+        _timeElapsed += Time.deltaTime;
+        
         float height = Mathf.Clamp(Mathf.Round((player.position.y - _startOffsetY )* 40), 0, Mathf.Infinity);
-        text.text = "HEIGHT : " + height;
+        float hpt = height / _timeElapsed;
+        text.text = "HEIGHT : " + height + "\nHPT : " + hpt;
     }
 }

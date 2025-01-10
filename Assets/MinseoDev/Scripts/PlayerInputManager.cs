@@ -7,6 +7,7 @@ public class PlayerInputManager : MonoBehaviour
 {
     public Vector2 move;
     public bool jump;
+    public bool pause;
 
     public void OnMove(InputAction.CallbackContext value)
     {
@@ -23,6 +24,14 @@ public class PlayerInputManager : MonoBehaviour
         if (value.canceled)
         {
             jump = false;
+        }
+    }
+
+    public void OnPause(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            pause = true;
         }
     }
 }
