@@ -77,6 +77,7 @@ public class PlayerBehavior : MonoBehaviour
             if (!_grounded)
             {
                 _grounded = true;
+                if (_isClimbing) _isClimbing = false;
             } 
         }
         else
@@ -134,16 +135,9 @@ public class PlayerBehavior : MonoBehaviour
             }
             else
             {
-                if ((_playerInput.move.x > 0 && _speed < 0) || (_playerInput.move.x < 0 && _speed > 0))
-                {
-                    _speed += Time.fixedDeltaTime * _playerInput.move.x * airSpeedDecrease;
-                    
-                    if (_speed < setSpeedZeroOffset && _speed > -setSpeedZeroOffset)
-                    {
-                        _speed = 0;
-                    }
-                } 
+                _speed += Time.fixedDeltaTime * _playerInput.move.x * airSpeedDecrease;
             }
+            
         }
         else
         {
