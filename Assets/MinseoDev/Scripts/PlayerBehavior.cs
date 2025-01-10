@@ -262,15 +262,19 @@ public class PlayerBehavior : MonoBehaviour
         else
         {
             _rigidbody.velocity = new Vector2(_speed, _rigidbody.velocity.y);
-            if (gettingHit && _rigidbody.velocity.y < 0) _rigidbody.velocity += Vector2.up * waterConstant;
+            if (gettingHit && _rigidbody.velocity.y < 0)
+            {
+                _rigidbody.velocity -= Vector2.up * _rigidbody.velocity.y * 0.7f;
+                _rigidbody.velocity += Vector2.up * waterConstant;
+            }
             if (touchingDescendingPlatform && _rigidbody.velocity.y >= 0) _rigidbody.velocity -= Vector2.up * 2;
         }
 }
 
     private void Jump()
     {
-        float actualJumpPower = gettingHit ? jumpPower / 3 : jumpPower;
-        float actualWallJumpPower = gettingHit ? wallJumpPower / 3 : wallJumpPower;
+        float actualJumpPower = gettingHit ? jumpPower / 2 : jumpPower;
+        float actualWallJumpPower = gettingHit ? wallJumpPower / 2 : wallJumpPower;
         if (_coyoteTimeElapsed > 0 || _isClimbing)
         {
             if (_jumpTimeOutElapsed < 0 && _playerInput.jump)
