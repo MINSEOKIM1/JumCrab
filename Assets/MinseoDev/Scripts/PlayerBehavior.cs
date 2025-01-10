@@ -47,6 +47,8 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private float maxVignetteIntensity, minVignetteIntensity;
 
     [SerializeField] private Volume postProcessing;
+
+    [SerializeField] private Transform footPosition;
      
 
     // player's current state
@@ -71,8 +73,8 @@ public class PlayerBehavior : MonoBehaviour
 
     public float _vignetteIntensity;
     public bool _vignetteIncrease;
-    
-    
+
+    public bool touchingDescendingPlatform = false;
 
     private Vignette _vignette;
     
@@ -111,6 +113,15 @@ public class PlayerBehavior : MonoBehaviour
         _noDamageTimeElapsed -= Time.deltaTime;
         _coyoteTimeElapsed -= Time.deltaTime;
 
+        if (touchingDescendingPlatform)
+        {
+            Physics2D.IgnoreLayerCollision(3, 6, true); // true: 충돌 무시, false: 충돌 허용
+        }
+        else
+        {
+            Physics2D.IgnoreLayerCollision(3, 6, false);  // true: 충돌 무시, false: 충돌 허용
+        }
+
         Jump();
         RotateBody();
         HpSliderUpdate();
@@ -120,7 +131,7 @@ public class PlayerBehavior : MonoBehaviour
     private void GroundCheck()
     {
         var raycastHit = Physics2D.Raycast(
-            transform.position, 
+            footPosition.position, 
             Vector2.down, 
             groundCheckDistance, 
             groundLayers);
@@ -147,6 +158,8 @@ public class PlayerBehavior : MonoBehaviour
             {
                 _grounded = false;
             }
+
+            if (_coyoteTimeElapsed < 0) touchingDescendingPlatform = false;
         }
     }
 
@@ -159,6 +172,7 @@ public class PlayerBehavior : MonoBehaviour
         
         if (hit.collider.GetComponent<DescendingPlatform>())
         {
+            touchingDescendingPlatform = true;
             var a = hit.collider.GetComponent<DescendingPlatform>();
             a.descending = true;
         }
@@ -241,6 +255,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             _rigidbody.velocity = new Vector2(_speed, _rigidbody.velocity.y);
             if (gettingHit && _rigidbody.velocity.y < 0) _rigidbody.velocity += Vector2.up * waterConstant;
+            if (touchingDescendingPlatform && _rigidbody.velocity.y >= 0) _rigidbody.velocity -= Vector2.up * 2;
         }
 }
 
@@ -258,6 +273,7 @@ public class PlayerBehavior : MonoBehaviour
                     _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
                     _rigidbody.AddForce(Vector2.up * actualJumpPower, ForceMode2D.Impulse);
                     _playerInput.jump = false;
+                    touchingDescendingPlatform = false;
                 }
                 else
                 {
@@ -316,6 +332,8 @@ public class PlayerBehavior : MonoBehaviour
                     _rigidbody.AddForce(Vector2.up * jumpPower / 2, ForceMode2D.Impulse);
 
                     _vignetteIncrease = true;
+                    
+                    
                     
                     // FLASH!
                     StartCoroutine(HitFlash());
