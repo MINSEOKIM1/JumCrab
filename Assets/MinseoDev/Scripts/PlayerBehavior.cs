@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 public class PlayerBehavior : MonoBehaviour
 {
@@ -22,10 +25,29 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private LayerMask wallLayers;
 
+    [SerializeField] private float coyoteTime;
+    
     [SerializeField] private float jumpTimeOut;
     [SerializeField] private float wallClimbTimeOut;
 
     [SerializeField] private float rotationSpeed;
+
+    [SerializeField] private float maxHp;
+
+    [SerializeField] private Slider hpSlider;
+    [SerializeField] private float hpSliderChangeSpeed;
+
+    [SerializeField] private float noDamageTime;
+
+    [SerializeField] private float waterConstant;
+
+    [SerializeField] private float boilingInitialDamage;
+    [SerializeField] private float boilingDOT;
+
+    [SerializeField] private float maxVignetteIntensity, minVignetteIntensity;
+
+    [SerializeField] private Volume postProcessing;
+     
 
     // player's current state
     public float _speed;
@@ -33,21 +55,46 @@ public class PlayerBehavior : MonoBehaviour
     public bool _grounded;
     public bool _isClimbing;
 
+    public float _coyoteTimeElapsed;
+    
     public float _jumpTimeOutElapsed;
     public float _wallClimbTimeOutElapsed;
     
     public bool _isClimbingLeftWall;
+
+    public float _hp;
+
+    public float _noDamageTimeElapsed;
+
+    public bool _getHitInitially = false;
+    public bool gettingHit;
+
+    public float _vignetteIntensity;
+    public bool _vignetteIncrease;
+    
+    
+
+    private Vignette _vignette;
     
     // components;
     private Collider2D _collider;
     private Rigidbody2D _rigidbody;
     private PlayerInputManager _playerInput;
 
+    private SpriteRenderer[] _renderers;
+
     private void Start()
     {
         _collider = GetComponent<CapsuleCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInputManager>();
+
+        _renderers = GetComponentsInChildren<SpriteRenderer>();
+
+        if (postProcessing.profile.TryGet(out _vignette))
+        {
+            _vignette.active = true;
+        }
     }
 
     private void FixedUpdate()
@@ -61,9 +108,13 @@ public class PlayerBehavior : MonoBehaviour
     private void Update()
     {
         _jumpTimeOutElapsed -= Time.deltaTime;
-        
+        _noDamageTimeElapsed -= Time.deltaTime;
+        _coyoteTimeElapsed -= Time.deltaTime;
+
         Jump();
         RotateBody();
+        HpSliderUpdate();
+        DamageCheck();
     }
 
     private void GroundCheck()
@@ -80,6 +131,7 @@ public class PlayerBehavior : MonoBehaviour
 
         if (raycastHit)
         {
+            _coyoteTimeElapsed = coyoteTime;
             if (!_grounded)
             {
                 _grounded = true;
@@ -171,12 +223,15 @@ public class PlayerBehavior : MonoBehaviour
         else
         {
             _rigidbody.velocity = new Vector2(_speed, _rigidbody.velocity.y);
+            if (gettingHit && _rigidbody.velocity.y < 0) _rigidbody.velocity += Vector2.up * waterConstant;
         }
 }
 
     private void Jump()
     {
-        if (_grounded || _isClimbing)
+        float actualJumpPower = gettingHit ? jumpPower / 3 : jumpPower;
+        float actualWallJumpPower = gettingHit ? wallJumpPower / 3 : wallJumpPower;
+        if (_coyoteTimeElapsed > 0 || _isClimbing)
         {
             if (_jumpTimeOutElapsed < 0 && _playerInput.jump)
             {
@@ -184,16 +239,16 @@ public class PlayerBehavior : MonoBehaviour
                 {
                     _jumpTimeOutElapsed = jumpTimeOut;
                     _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
-                    _rigidbody.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                    _rigidbody.AddForce(Vector2.up * actualJumpPower, ForceMode2D.Impulse);
                 }
                 else
                 {
                     _jumpTimeOutElapsed = jumpTimeOut;
                     _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
                     _rigidbody.AddForce(
-                        Vector2.up * jumpPower,
+                        Vector2.up * actualJumpPower,
                         ForceMode2D.Impulse);
-                    _speed = _isClimbingLeftWall ? wallJumpPower : -wallJumpPower;
+                    _speed = _isClimbingLeftWall ? actualWallJumpPower : -actualWallJumpPower;
                     _isClimbing = false;
                 }
             }
@@ -212,6 +267,120 @@ public class PlayerBehavior : MonoBehaviour
             targetAngle = _isClimbingLeftWall ? -90 : 90;
         }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotationSpeed);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotationSpeed * Time.deltaTime);
+    }
+
+    private void HpSliderUpdate()
+    {
+        hpSlider.value = Mathf.Lerp(hpSlider.value, _hp / maxHp, hpSliderChangeSpeed * Time.deltaTime);
+    }
+
+    private void DamageCheck()
+    {
+        if (gettingHit)
+        {
+            if (_getHitInitially)
+            {
+                if (_noDamageTimeElapsed < 0)
+                {
+                    _hp += boilingInitialDamage;
+                    _getHitInitially = false;
+                    _noDamageTimeElapsed = noDamageTime;
+
+                    
+                    // JUMP!
+                    _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
+                    _isClimbing = false;
+                    
+                    _jumpTimeOutElapsed = jumpTimeOut;
+                    _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
+                    _rigidbody.AddForce(Vector2.up * jumpPower / 2, ForceMode2D.Impulse);
+
+                    _vignetteIncrease = true;
+                    
+                    // FLASH!
+                    StartCoroutine(HitFlash());
+                }
+            } else if (_noDamageTimeElapsed < 0)
+            {
+                _hp += boilingDOT * Time.deltaTime;
+                
+                // post-processing
+                if (_vignetteIncrease)
+                {
+                    _vignetteIntensity += Time.deltaTime;
+                }
+                else
+                {
+                    _vignetteIntensity -= Time.deltaTime;
+                }
+                
+                if (_vignetteIntensity > maxVignetteIntensity)
+                {
+                    _vignetteIncrease = false;
+                }
+                
+                if (_vignetteIntensity < minVignetteIntensity)
+                {
+                    _vignetteIncrease = true;
+                }
+                _vignette.intensity.Override(_vignetteIntensity);
+            }
+        } else
+        {
+            if (_noDamageTimeElapsed < 0)
+            {
+                _getHitInitially = true;
+                _vignette.intensity.Override(0);
+            }
+            
+        }
+    }
+
+    IEnumerator HitFlash()
+    {
+        float time = 0;
+        int a = 0;
+        while (time < 0.5f)
+        {
+            time += Time.deltaTime;
+            a++;
+
+            if (a < 5)
+            {
+                foreach (var sprite in _renderers)
+                {
+                    sprite.color = Color.red;
+                }
+            }
+            else
+            {
+                foreach (var sprite in _renderers)
+                {
+                    sprite.color = Color.white;
+                }
+            }
+
+            if (time < 0.3f)
+            {
+                _vignette.intensity.Override(1f * time);
+            }
+            else if (time < 0.6f)
+            {
+                _vignette.intensity.Override(1 * (0.6f - time));
+            }
+            else if (time < 0.65f)
+            {
+                _vignette.intensity.Override(0);
+            }
+
+            if (a > 10) a = 0;
+            yield return null;
+            
+            foreach (var sprite in _renderers)
+            {
+                sprite.color = Color.white;
+            }
+        }
     }
 }
