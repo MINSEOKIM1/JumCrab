@@ -10,6 +10,18 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+# Rider settings
+.idea/
+out/
+*.iml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/vcs.xml
+
+# Related to Mac
+.DS_Store
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
