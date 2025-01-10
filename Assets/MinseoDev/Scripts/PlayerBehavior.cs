@@ -132,10 +132,13 @@ public class PlayerBehavior : MonoBehaviour
         if (raycastHit)
         {
             _coyoteTimeElapsed = coyoteTime;
-            if (!_grounded)
+            if (!_grounded && _rigidbody.velocity.y <= 0)
             {
                 _grounded = true;
                 if (_isClimbing) _isClimbing = false;
+                
+                // 특수 기믹 확인
+                SpecialPlatformCheck(raycastHit);
             } 
         }
         else
@@ -144,6 +147,20 @@ public class PlayerBehavior : MonoBehaviour
             {
                 _grounded = false;
             }
+        }
+    }
+
+    private void SpecialPlatformCheck(RaycastHit2D hit)
+    {
+        if (hit.collider.GetComponent<VanshingPlatform>())
+        {
+            hit.collider.GetComponent<VanshingPlatform>().Vanishing();
+        }
+        
+        if (hit.collider.GetComponent<DescendingPlatform>())
+        {
+            var a = hit.collider.GetComponent<DescendingPlatform>();
+            a.descending = true;
         }
     }
 
@@ -240,6 +257,7 @@ public class PlayerBehavior : MonoBehaviour
                     _jumpTimeOutElapsed = jumpTimeOut;
                     _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
                     _rigidbody.AddForce(Vector2.up * actualJumpPower, ForceMode2D.Impulse);
+                    _playerInput.jump = false;
                 }
                 else
                 {
@@ -250,6 +268,7 @@ public class PlayerBehavior : MonoBehaviour
                         ForceMode2D.Impulse);
                     _speed = _isClimbingLeftWall ? actualWallJumpPower : -actualWallJumpPower;
                     _isClimbing = false;
+                    _playerInput.jump = false;
                 }
             }
         }
