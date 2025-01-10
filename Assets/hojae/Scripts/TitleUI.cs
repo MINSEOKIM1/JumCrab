@@ -65,7 +65,7 @@ public class TitleUI : MonoBehaviour
         //inActive Button UI
         optionCanvas.gameObject.SetActive(false);
         //start game
-        if (isPlayerNewbie)
+        if (isPlayerNewbie) //if Newbie, then show guide
         {
             GuideButtonPressed();
             isPlayerNewbie = false;
@@ -74,7 +74,6 @@ public class TitleUI : MonoBehaviour
         {
             Backbutton.gameObject.SetActive(true);
         }
-        
     }
 
     public void SettingButtonPressed()
@@ -88,16 +87,16 @@ public class TitleUI : MonoBehaviour
     public void GuideButtonPressed()
     {
         //Explain this game
-        guideUI.guideInit();
+        
         optionCanvas.gameObject.SetActive(false);
         guideCanvas.gameObject.SetActive(true);
+        guideUI.guideInit();
         
-        if (!isPlayerNewbie)    //if player is not newbie
+        if (!isPlayerNewbie)    //if player is not newbie, backbutton is active
         {
             Backbutton.gameObject.SetActive(true);
         }
         isPlayerNewbie = false;
-        
     }
     
     public void ExitButtonPressed()
