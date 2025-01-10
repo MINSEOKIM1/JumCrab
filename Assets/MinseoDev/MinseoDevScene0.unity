@@ -887,12 +887,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f409f74712f403ba81671c8af48feb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 5
-  accel: 40
-  jumpPower: 8
+  maxSpeed: 6
+  maxWallSpeed: 4
+  accel: 80
+  jumpPower: 10
   wallJumpPower: 8
-  airSpeedDecrease: 5
-  setSpeedZeroOffset: 1
+  airSpeedDecrease: 15
+  setSpeedZeroOffset: 2
   groundCheckDistance: 0.4
   groundLayers:
     serializedVersion: 2
@@ -902,10 +903,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   jumpTimeOut: 0.1
+  wallClimbTimeOut: 0.5
+  rotationSpeed: 0.2
   _speed: 0
-  _grounded: 0
+  _grounded: 1
   _isClimbing: 0
-  _jumpTimeOutElapsed: 0
+  _jumpTimeOutElapsed: -31.575716
+  _wallClimbTimeOutElapsed: 0
   _isClimbingLeftWall: 0
 --- !u!114 &1396546833
 MonoBehaviour:
