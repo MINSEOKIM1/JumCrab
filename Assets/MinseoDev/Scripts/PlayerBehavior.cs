@@ -7,6 +7,7 @@ public class PlayerBehavior : MonoBehaviour
 {
     // player's setting
     [SerializeField] private float maxSpeed;
+    [SerializeField] private float maxWallSpeed;
     [SerializeField] private float accel;
     [SerializeField] private float jumpPower;
     [SerializeField] private float wallJumpPower;
@@ -22,6 +23,9 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private LayerMask wallLayers;
 
     [SerializeField] private float jumpTimeOut;
+    [SerializeField] private float wallClimbTimeOut;
+
+    [SerializeField] private float rotationSpeed;
 
     // player's current state
     public float _speed;
@@ -30,7 +34,8 @@ public class PlayerBehavior : MonoBehaviour
     public bool _isClimbing;
 
     public float _jumpTimeOutElapsed;
-
+    public float _wallClimbTimeOutElapsed;
+    
     public bool _isClimbingLeftWall;
     
     // components;
@@ -58,6 +63,7 @@ public class PlayerBehavior : MonoBehaviour
         _jumpTimeOutElapsed -= Time.deltaTime;
         
         Jump();
+        RotateBody();
     }
 
     private void GroundCheck()
@@ -77,6 +83,7 @@ public class PlayerBehavior : MonoBehaviour
             if (!_grounded)
             {
                 _grounded = true;
+                if (_isClimbing) _isClimbing = false;
             } 
         }
         else
@@ -117,7 +124,10 @@ public class PlayerBehavior : MonoBehaviour
                 wallCheckDistance, 
                 wallLayers);
 
-            if (!hit)
+            if (_playerInput.move.x != 0) _wallClimbTimeOutElapsed = wallClimbTimeOut;
+            _wallClimbTimeOutElapsed -= Time.fixedDeltaTime;
+            
+            if (!hit || (_playerInput.move.x == 0 && _wallClimbTimeOutElapsed < 0))
             {
                 _isClimbing = false;
             }
@@ -134,16 +144,9 @@ public class PlayerBehavior : MonoBehaviour
             }
             else
             {
-                if ((_playerInput.move.x > 0 && _speed < 0) || (_playerInput.move.x < 0 && _speed > 0))
-                {
-                    _speed += Time.fixedDeltaTime * _playerInput.move.x * airSpeedDecrease;
-                    
-                    if (_speed < setSpeedZeroOffset && _speed > -setSpeedZeroOffset)
-                    {
-                        _speed = 0;
-                    }
-                } 
+                _speed += Time.fixedDeltaTime * _playerInput.move.x * airSpeedDecrease;
             }
+            
         }
         else
         {
@@ -155,15 +158,15 @@ public class PlayerBehavior : MonoBehaviour
 
         }
 
-        
-        _speed = Mathf.Clamp(_speed, -maxSpeed, maxSpeed);
+        float max = _isClimbing ? maxWallSpeed : maxSpeed;
+        _speed = Mathf.Clamp(_speed, -max, max);
     }
 
     private void ApplyActualMove()
     {
         if (_isClimbing)
         {
-            _rigidbody.velocity = new Vector2(0, _speed * (_isClimbingLeftWall ? -1 : 1));
+            _rigidbody.velocity = new Vector2((_isClimbingLeftWall ? -1 : 1), _speed * (_isClimbingLeftWall ? -1 : 1));
         }
         else
         {
@@ -195,5 +198,20 @@ public class PlayerBehavior : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void RotateBody()
+    {
+        float targetAngle = 0;
+        if (!_isClimbing)
+        {
+            targetAngle = 0;
+        }
+        else
+        {
+            targetAngle = _isClimbingLeftWall ? -90 : 90;
+        }
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotationSpeed);
     }
 }
