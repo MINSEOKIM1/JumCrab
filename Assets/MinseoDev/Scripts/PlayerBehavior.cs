@@ -122,7 +122,6 @@ public class PlayerBehavior : MonoBehaviour
             Physics2D.IgnoreLayerCollision(3, 6, false);  // true: 충돌 무시, false: 충돌 허용
         }
 
-        
         Jump();
         RotateBody();
         HpSliderUpdate();
