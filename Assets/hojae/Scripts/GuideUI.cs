@@ -12,10 +12,6 @@ public class GuideUI : MonoBehaviour
     // Start is called before the first frame update
     private void Awake()
     {
-        for (int i = 0; i < guidePanel.Length; i++)
-        {
-            guidePanel[i].gameObject.SetActive(false);
-        }
     }
 
     #region Method
@@ -33,7 +29,6 @@ public class GuideUI : MonoBehaviour
     public void ChangeGuidePanel()
     {
         guidePanel[currentPanel].gameObject.SetActive(false);
-        if(guidePanel.Length == currentPanel + 1) { return; }
         guidePanel[currentPanel + 1].gameObject.SetActive(true);
         currentPanel += 1;
     }
