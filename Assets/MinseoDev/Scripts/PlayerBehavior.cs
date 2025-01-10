@@ -76,6 +76,8 @@ public class PlayerBehavior : MonoBehaviour
 
     public bool touchingDescendingPlatform = false;
 
+    public GameObject currentDescendingPlatform;
+
     private Vignette _vignette;
     
     // components;
@@ -159,7 +161,11 @@ public class PlayerBehavior : MonoBehaviour
                 _grounded = false;
             }
 
-            if (_coyoteTimeElapsed < 0) touchingDescendingPlatform = false;
+            if (_coyoteTimeElapsed < 0)
+            {
+                if (currentDescendingPlatform) currentDescendingPlatform.layer = 6;
+                touchingDescendingPlatform = false;
+            }
         }
     }
 
@@ -174,6 +180,8 @@ public class PlayerBehavior : MonoBehaviour
         {
             touchingDescendingPlatform = true;
             var a = hit.collider.GetComponent<DescendingPlatform>();
+            currentDescendingPlatform = hit.transform.gameObject;
+            currentDescendingPlatform.layer = 8;
             a.descending = true;
         }
     }
@@ -274,6 +282,7 @@ public class PlayerBehavior : MonoBehaviour
                     _rigidbody.AddForce(Vector2.up * actualJumpPower, ForceMode2D.Impulse);
                     _playerInput.jump = false;
                     touchingDescendingPlatform = false;
+                    if (currentDescendingPlatform) currentDescendingPlatform.layer = 6;
                 }
                 else
                 {

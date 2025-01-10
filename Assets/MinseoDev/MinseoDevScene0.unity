@@ -593,7 +593,7 @@ GameObject:
   - component: {fileID: 251193868}
   - component: {fileID: 251193867}
   - component: {fileID: 251193870}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Descending Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1658,7 +1658,7 @@ GameObject:
   - component: {fileID: 902207196}
   - component: {fileID: 902207195}
   - component: {fileID: 902207194}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Descending Platform (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2758,6 +2758,7 @@ MonoBehaviour:
   _vignetteIntensity: 0
   _vignetteIncrease: 0
   touchingDescendingPlatform: 0
+  currentDescendingPlatform: {fileID: 0}
 --- !u!114 &1396546833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3114,7 +3115,7 @@ GameObject:
   - component: {fileID: 1506485587}
   - component: {fileID: 1506485586}
   - component: {fileID: 1506485585}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Descending Platform (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3429,7 +3430,7 @@ GameObject:
   - component: {fileID: 1649882085}
   - component: {fileID: 1649882084}
   - component: {fileID: 1649882083}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Descending Platform (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
