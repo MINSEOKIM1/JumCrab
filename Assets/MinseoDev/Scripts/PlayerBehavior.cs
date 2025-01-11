@@ -51,7 +51,8 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private Transform footPosition;
 
     [SerializeField] private float groundCheckTime;
-     
+
+    [SerializeField] private Camera camera;
 
     // player's current state
     public float _speed;
@@ -79,6 +80,8 @@ public class PlayerBehavior : MonoBehaviour
     public float _vignetteIntensity;
     public bool _vignetteIncrease;
 
+    public bool _hitair;
+    
     public bool touchingDescendingPlatform = false;
 
     public int aniIdWalk;
@@ -130,6 +133,8 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Update()
     {
+        float sizecamera = _hitair ? 4 : 5;
+        camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, sizecamera, Time.deltaTime * 5);
         if (pause) Time.timeScale = 0;
         else Time.timeScale = 1;
 
@@ -195,6 +200,7 @@ public class PlayerBehavior : MonoBehaviour
                 {
                     _coyoteTimeElapsed = coyoteTime;
                     _grounded = true;
+                    _hitair = false;
                     if (_isClimbing) _isClimbing = false;
 
                     // 특수 기믹 확인
@@ -289,6 +295,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             if (!_isClimbing && _jumpTimeOutElapsed < 0)
             {
+                _hitair = false;
                 _isClimbing = true;
                 _animator.SetBool(aniIdGrounded, true);
                 _isClimbingLeftWall = _playerInput.move.x < 0;
@@ -323,17 +330,15 @@ public class PlayerBehavior : MonoBehaviour
             }
             else
             {
-                _speed += Time.fixedDeltaTime * _playerInput.move.x * airSpeedDecrease;
+                _speed += Time.fixedDeltaTime * _playerInput.move.x * (_hitair? 10 :airSpeedDecrease);
             }
             
         }
         else
         {
-            if (_grounded || _isClimbing) _speed -= Time.fixedDeltaTime * accel * (_speed > 0 ? 1 : -1);
-            if (_speed < setSpeedZeroOffset && _speed > -setSpeedZeroOffset)
-            {
+            if (_grounded || _isClimbing) 
                 _speed = 0;
-            }
+            
 
         }
 
@@ -486,6 +491,29 @@ public class PlayerBehavior : MonoBehaviour
             }
             
         }
+    }
+
+    public void SingleDamage(float damage)
+    {
+        _hp += damage;
+        _noDamageTimeElapsed = noDamageTime;
+
+                    
+        // JUMP!
+        _hitair = true; 
+        
+        _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
+        _isClimbing = false;
+                    
+        _jumpTimeOutElapsed = jumpTimeOut;
+        _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
+        _rigidbody.AddForce(Vector2.up * jumpPower / 2, ForceMode2D.Impulse);
+        _speed = _sprite.flipX ? 5 : -5;
+
+        _vignetteIncrease = true;
+        
+        // FLASH!
+        StartCoroutine(HitFlash());
     }
 
     IEnumerator HitFlash()

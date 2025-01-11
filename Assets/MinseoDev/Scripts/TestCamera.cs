@@ -16,6 +16,13 @@ public class TestCamera : MonoBehaviour
 
     private void Update()
     {
-        transform.position = new Vector3(0, playerTransform.position.y + _yCameraOffset, -10);
+        if (playerTransform.GetComponent<PlayerBehavior>()._hitair)
+        {
+            transform.position = playerTransform.position + Vector3.back * 10;
+        }
+        else
+        {
+            transform.position = new Vector3(0, playerTransform.position.y + _yCameraOffset, -10);
+        }
     }
 }
