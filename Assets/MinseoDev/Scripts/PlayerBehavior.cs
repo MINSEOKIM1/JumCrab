@@ -5,6 +5,7 @@ using UnityEditor.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerBehavior : MonoBehaviour
@@ -33,7 +34,7 @@ public class PlayerBehavior : MonoBehaviour
 
     [SerializeField] private float rotationSpeed;
 
-    [SerializeField] private float maxHp;
+    [SerializeField] public float maxHp;
 
     [SerializeField] private Slider hpSlider;
     [SerializeField] private float hpSliderChangeSpeed;
@@ -186,6 +187,12 @@ public class PlayerBehavior : MonoBehaviour
             _sprite.flipX = !_sprite.flipX;
         _animator.SetFloat(aniIdWalk, _playerInput.move.x == 0? 0: 1);
 
+
+        if (_hp >= maxHp)
+        {
+
+            SceneManager.LoadScene("hojae/MinseoDevScene0");
+        }
         Jump();
         RotateBody();
         HpSliderUpdate();
@@ -678,7 +685,7 @@ public class PlayerBehavior : MonoBehaviour
     IEnumerator OnSpiderWeb()
     {
         onSpiderWeb = true;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         onSpiderWeb = false;
     }
 }

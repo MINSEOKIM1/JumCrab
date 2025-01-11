@@ -31,9 +31,9 @@ public class SpiderPlatform : MonoBehaviour
         if (!init)
         {
             descending = true;
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             descending = false;
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 50; i++)
             {
                 GameObject go = Instantiate(spider,
                     camera.position + (Random.Range(0f, 1f) < 0.5f ? Vector3.right : Vector3.left) * 2.5f + Vector3.down * 8 + Vector3.forward * 10,
