@@ -292,12 +292,18 @@ public class PlayerBehavior : MonoBehaviour
     public Image success;
     public Image clearPicture;
 
+    public GameObject[] uigos;
+
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.CompareTag("Goal"))
         {
             if (!clear)
             {
+                foreach (var va in uigos)
+                {
+                    va.SetActive(false);
+                }
                 _rigidbody.velocity = Vector2.zero;
                 _rigidbody.AddForce(new Vector2(0, 8f), ForceMode2D.Impulse);
                 clear = true;
