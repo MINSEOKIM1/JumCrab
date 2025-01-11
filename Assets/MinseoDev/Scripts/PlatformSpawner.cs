@@ -103,17 +103,27 @@ public class PlatformSpawner : MonoBehaviour
         for (int i = 6000 + (int)yInterval[3]; i < 15000; i+=(int)yInterval[3])
         {if (i > 10000) break;
         
-            if (Random.Range(0f, 1f) > 0.6) continue; 
-            var platform = Instantiate(platformPrefabs[3],
-                new Vector3(i % 2 == 0? Random.Range(minX, minX*0.3f) : Random.Range(maxX*0.3f, maxX)
-                        , _startY + i / 40, 0),
-                Quaternion.identity);
+            if (Random.Range(0f, 1f) > 0.6)
+            {
+                var platform = Instantiate(platformPrefabs[6],
+                    new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
+                    Quaternion.identity);
             
-            _platforms.Add(platform);
+                _platforms.Add(platform);
+            }
+            else
+            {
+                var platform = Instantiate(platformPrefabs[3],
+                    new Vector3(i % 2 == 0 ? Random.Range(minX, minX * 0.3f) : Random.Range(maxX * 0.3f, maxX)
+                        , _startY + i / 40, 0),
+                    Quaternion.identity);
+
+                _platforms.Add(platform);
+            }
         }
         
         // 100 0.4
-        for (int i = 6000 + (int)yInterval[4]; i < 15000; i+=(int)yInterval[4])
+        /*for (int i = 6000 + (int)yInterval[4]; i < 15000; i+=(int)yInterval[4])
         {if (i > 10000) break;
         
             if (Random.Range(0f, 1f) > 0.4) continue; 
@@ -122,13 +132,13 @@ public class PlatformSpawner : MonoBehaviour
                 Quaternion.identity);
             
             _platforms.Add(platform);
-        }
+        }*/
         
         // 420 0.8
         for (int i = 6000 + (int)yInterval[5]; i < 15000; i+=(int)yInterval[5])
         {if (i > 10000) break;
         
-            if (Random.Range(0f, 1f) > 0.8) continue; 
+            if (Random.Range(0f, 1f) > 0.5) continue; 
             var platform = Instantiate(platformPrefabs[4],
                 new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
                 Quaternion.identity);
@@ -161,7 +171,7 @@ public class PlatformSpawner : MonoBehaviour
         }
         
         // 100 0.1
-        for (int i = 6000 + (int)yInterval[8]; i < 15000; i+=(int)yInterval[8])
+        /*for (int i = 6000 + (int)yInterval[8]; i < 15000; i+=(int)yInterval[8])
         {if (i > 10000) break;
         
             if (Random.Range(0f, 1f) > 0.1) continue; 
@@ -170,6 +180,6 @@ public class PlatformSpawner : MonoBehaviour
                 Quaternion.identity);
             
             _platforms.Add(platform);
-        }
+        }*/
     }
 }

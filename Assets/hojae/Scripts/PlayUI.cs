@@ -7,6 +7,9 @@ public class PlayUI : MonoBehaviour
 {
     [SerializeField] private GameObject hpTop;
     [SerializeField] private GameObject hpBottom;
+
+    public PlayerBehavior playerb;
+    
     Image hpBottomImage;
     [SerializeField] [Range(0, 1)] private float hp;
     public float sensitivity;
@@ -21,6 +24,7 @@ public class PlayUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        hp = playerb._hp / playerb.maxHp;
         hpBottomImage.fillAmount = hp;
         hpTop.transform.position = hpTopPos + new Vector3(0,  sensitivity * hp, 0);
     }
