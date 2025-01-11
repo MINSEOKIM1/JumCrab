@@ -107,6 +107,7 @@ public class PlayerBehavior : MonoBehaviour
     public bool onSpiderWeb;
 
     public bool die;
+    public bool clear;
     public Image climbFillImage;
 
     public Image dieFade;
@@ -180,7 +181,7 @@ public class PlayerBehavior : MonoBehaviour
             Time.fixedDeltaTime *= 0.5f;
         } 
 
-        if (_playerInput.pause && !die)
+        if (_playerInput.pause && !die && !clear)
         {
             pause = !pause;
             _playerInput.pause = false;
@@ -264,7 +265,59 @@ public class PlayerBehavior : MonoBehaviour
             diePicture.color = new Color(1, 1, 1, time / 1);
             yield return null;
         }
-        
+    }
+
+    private IEnumerator Clear()
+    {
+        float time = 0;
+        success.gameObject.SetActive(true);
+        _speed = 0;
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            
+            success.color = new Color(1, 1, 1, time / 1);
+            yield return null;
+        }
+
+        StartCoroutine(ClearFade());
+        yield return new WaitForSeconds(1.2f);
+        while (true)
+        {
+            _speed = -maxSpeed;
+            yield return null;
+        }
+    }
+
+    public Image success;
+    public Image clearPicture;
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.CompareTag("Goal"))
+        {
+            if (!clear)
+            {
+                _rigidbody.velocity = Vector2.zero;
+                _rigidbody.AddForce(new Vector2(0, 8f), ForceMode2D.Impulse);
+                clear = true;
+                StartCoroutine(Clear());
+            }
+        }
+    }
+
+    private IEnumerator ClearFade()
+    {
+        yield return new WaitForSeconds(2f);
+        float time = 0;
+        clearPicture.gameObject.SetActive(true);
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            
+            clearPicture.color = new Color(1, 1, 1, time / 1);
+            yield return null;
+        }
     }
 
     private void GroundCheck()
@@ -428,7 +481,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private void MoveHorizontally()
     {
-        if (die) return;
+        if (die ||  clear) return;
         if (_playerInput.move.x != 0)
         {
             if (_grounded || _isClimbing)
@@ -477,11 +530,11 @@ public class PlayerBehavior : MonoBehaviour
                 _rigidbody.velocity -= Vector2.up * 2;
             }
         }
-}
+    }
 
     private void Jump()
     {
-        if (die) return;
+        if (die || clear) return;
         float actualJumpPower = gettingHit ? jumpPower / 2 : jumpPower;
         float actualWallJumpPower = gettingHit ? wallJumpPower / 2 : wallJumpPower;
         if (_coyoteTimeElapsed > 0 || _isClimbing)
@@ -582,6 +635,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private void DamageCheck()
     {
+        if (clear) return;
         if (gettingHit)
         {
             if (_getHitInitially)
@@ -643,12 +697,12 @@ public class PlayerBehavior : MonoBehaviour
                 _getHitInitially = true;
                 _vignette.intensity.Override(0);
             }
-            
         }
     }
 
     public void SingleDamage(float damage)
     {
+        if (clear) return;
         _hp += damage;
         _noDamageTimeElapsed = noDamageTime;
 

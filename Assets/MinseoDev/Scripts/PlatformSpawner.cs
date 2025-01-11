@@ -101,7 +101,7 @@ public class PlatformSpawner : MonoBehaviour
         // phase 2
         // 80 0.6
         for (int i = 6000 + (int)yInterval[3]; i < 15000; i+=(int)yInterval[3])
-        {if (i > 10000) break;
+        {if (i > 9700) break;
 
             float pr = Random.Range(0f, 1f);
             if (pr > 0.7)
@@ -146,7 +146,7 @@ public class PlatformSpawner : MonoBehaviour
         
         // 420 0.8
         for (int i = 6000 + (int)yInterval[5]; i < 15000; i+=(int)yInterval[5])
-        {if (i > 10000) break;
+        {if (i > 9700) break;
         
             if (Random.Range(0f, 1f) > 0.5) continue; 
             var platform = Instantiate(platformPrefabs[4],
@@ -158,7 +158,7 @@ public class PlatformSpawner : MonoBehaviour
         
         // 100 0.2
         for (int i = 6000 + (int)yInterval[6]; i < 15000; i+=(int)yInterval[6])
-        {if (i > 10000) break;
+        {if (i > 9700) break;
         
             if (Random.Range(0f, 1f) > 0.2) continue; 
             var platform = Instantiate(platformPrefabs[5],
@@ -170,7 +170,7 @@ public class PlatformSpawner : MonoBehaviour
         
         // 140 0.2
         for (int i = 6000 + (int)yInterval[7]; i < 15000; i+=(int)yInterval[7])
-        {if (i > 10000) break;
+        {if (i > 9700) break;
         
             if (Random.Range(0f, 1f) > 0.2) continue; 
             var platform = Instantiate(platformPrefabs[5],

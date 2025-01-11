@@ -17,16 +17,25 @@ public class TestCamera : MonoBehaviour
     private void Update()
     {
         Vector3 targetPos;
-        if (playerTransform.GetComponent<PlayerBehavior>()._hitair || playerTransform.GetComponent<PlayerBehavior>().die)
+        if (transform.position.y < 240)
         {
-            targetPos = playerTransform.position + Vector3.back * 10;
+            if (playerTransform.GetComponent<PlayerBehavior>()._hitair ||
+                playerTransform.GetComponent<PlayerBehavior>().die)
+            {
+                targetPos = playerTransform.position + Vector3.back * 10;
+            }
+            else
+            {
+                targetPos = new Vector3(0, playerTransform.position.y + _yCameraOffset, -10);
+            }
         }
         else
         {
-            targetPos = new Vector3(0, playerTransform.position.y + _yCameraOffset, -10);
+            targetPos = new Vector3(0, 240, -10);
         }
-
         
+
+
         transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime);
         
     }
