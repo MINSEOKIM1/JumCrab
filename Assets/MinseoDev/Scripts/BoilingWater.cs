@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BoilingWater : MonoBehaviour
 {
-    [SerializeField] private float upwardSpeed;
+    [SerializeField] public float upwardSpeed;
     [SerializeField] private float initialDamage;
     [SerializeField] private float dotDamage;
 
