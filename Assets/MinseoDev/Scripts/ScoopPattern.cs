@@ -11,7 +11,7 @@ public class ScoopPattern : MonoBehaviour
 
     public float minX, maxX;
 
-    private float _cooldownElapsed;
+    private float _cooldownElapsed = 10;
 
     private Animator _animator;
 

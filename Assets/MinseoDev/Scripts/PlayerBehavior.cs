@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -37,6 +38,8 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private float hpSliderChangeSpeed;
 
+    [SerializeField] private Slider climbSlider;
+
     [SerializeField] private float noDamageTime;
 
     [SerializeField] private float waterConstant;
@@ -53,6 +56,9 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private float groundCheckTime;
 
     [SerializeField] private Camera camera;
+
+    [Header("CLIMB GAUGE")] [SerializeField]
+    private float maxClimbGauge;
 
     // player's current state
     public float _speed;
@@ -81,6 +87,8 @@ public class PlayerBehavior : MonoBehaviour
     public bool _vignetteIncrease;
 
     public bool _hitair;
+
+    public float _climbGuage;
     
     public bool touchingDescendingPlatform = false;
 
@@ -143,6 +151,9 @@ public class PlayerBehavior : MonoBehaviour
             pause = !pause;
             _playerInput.pause = false;
         }
+
+        if (_isClimbing) _climbGuage -= Time.deltaTime;
+        _climbGuage = Mathf.Clamp(_climbGuage, 0, maxClimbGauge);
         
         _jumpTimeOutElapsed -= Time.deltaTime;
         _noDamageTimeElapsed -= Time.deltaTime;
@@ -153,7 +164,6 @@ public class PlayerBehavior : MonoBehaviour
 
         if (Mathf.Abs(_previousVelocityY - _rigidbody.velocity.y) > 0.1f)
         {
-            Debug.Log(Mathf.Abs(_previousVelocityY - _rigidbody.velocity.y));
             _groundChekcTimeElapsed = groundCheckTime;
         }
         
@@ -175,6 +185,7 @@ public class PlayerBehavior : MonoBehaviour
         Jump();
         RotateBody();
         HpSliderUpdate();
+        ClimbSliderUpdate();
         DamageCheck();
     }
 
@@ -189,10 +200,6 @@ public class PlayerBehavior : MonoBehaviour
                 groundCheckDistance * a,
                 groundLayers);
             a += 0.01f;
-
-            Debug.DrawRay(footPosition.position,
-                Vector2.down * groundCheckDistance,
-                Color.red);
 
             if (raycastHit)
             {
@@ -264,7 +271,7 @@ public class PlayerBehavior : MonoBehaviour
             }
             else
             {
-                Debug.Log("Ray hit inside the BoxCollider2D");
+                
             }
         }
     }
@@ -287,13 +294,9 @@ public class PlayerBehavior : MonoBehaviour
             wallCheckDistance, 
             wallLayers);
         
-        Debug.DrawRay(transform.position, 
-            Vector2.right * _playerInput.move.x * wallCheckDistance, 
-            Color.red);
-
         if (raycastHit)
         {
-            if (!_isClimbing && _jumpTimeOutElapsed < 0)
+            if (!_isClimbing && _jumpTimeOutElapsed < 0 && _climbGuage > 0)
             {
                 _hitair = false;
                 _isClimbing = true;
@@ -313,7 +316,7 @@ public class PlayerBehavior : MonoBehaviour
             if (_playerInput.move.x != 0) _wallClimbTimeOutElapsed = wallClimbTimeOut;
             _wallClimbTimeOutElapsed -= Time.fixedDeltaTime;
             
-            if (!hit || (_playerInput.move.x == 0 && _wallClimbTimeOutElapsed < 0))
+            if (!hit || (_playerInput.move.x == 0 && _wallClimbTimeOutElapsed < 0) || _climbGuage == 0)
             {
                 _isClimbing = false;
             }
@@ -338,7 +341,10 @@ public class PlayerBehavior : MonoBehaviour
         {
             if (_grounded || _isClimbing) 
                 _speed = 0;
-            
+            if (!_hitair)
+            {
+                _speed = Mathf.Lerp(_speed, 0, Time.deltaTime * 5);
+            }
 
         }
 
@@ -363,7 +369,7 @@ public class PlayerBehavior : MonoBehaviour
 
             if (touchingDescendingPlatform && _rigidbody.velocity.y >= 0)
             {
-                Debug.Log("가지마라");
+                
                 _rigidbody.velocity -= Vector2.up * 2;
             }
         }
@@ -391,6 +397,7 @@ public class PlayerBehavior : MonoBehaviour
                 }
                 else
                 {
+                    _climbGuage -= 0.3f;
                     _jumpTimeOutElapsed = jumpTimeOut;
                     _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
                     _rigidbody.AddForce(
@@ -427,6 +434,11 @@ public class PlayerBehavior : MonoBehaviour
     private void HpSliderUpdate()
     {
         hpSlider.value = Mathf.Lerp(hpSlider.value, _hp / maxHp, hpSliderChangeSpeed * Time.deltaTime);
+    }
+    
+    private void ClimbSliderUpdate()
+    {
+        climbSlider.value = Mathf.Lerp(climbSlider.value, _climbGuage / maxClimbGauge, hpSliderChangeSpeed * Time.deltaTime);
     }
 
     private void DamageCheck()
