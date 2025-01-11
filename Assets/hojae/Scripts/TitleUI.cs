@@ -22,15 +22,15 @@ public class TitleUI : MonoBehaviour
     [Header("Button")]
     [SerializeField] private Image[] titleButton; //Imag
     [SerializeField] private Image Backbutton;
-    
     [Header("Canvas")]
     [SerializeField] private GameObject guideCanvas; //Canvas
     private GuideUI guideUI;
     [SerializeField] private GameObject settingCanvas;
     [SerializeField] private GameObject optionCanvas; //GameObject
     // 0 : start, 1 : setting, 2: guide, 3: exit 
-    private bool isPlayerNewbie;
+    public bool isPlayerNewbie { get; set; }
     private TitleButton currentOption;
+    private bool startguide;
     #endregion
     
     #region LifeCycle
@@ -67,12 +67,8 @@ public class TitleUI : MonoBehaviour
         //start game
         if (isPlayerNewbie) //if Newbie, then show guide
         {
+            startguide = true;
             GuideButtonPressed();
-            isPlayerNewbie = false;
-        }
-        else
-        {
-            Backbutton.gameObject.SetActive(true);
         }
     }
 
@@ -91,14 +87,21 @@ public class TitleUI : MonoBehaviour
         optionCanvas.gameObject.SetActive(false);
         guideCanvas.gameObject.SetActive(true);
         guideUI.guideInit();
-        
-        if (!isPlayerNewbie)    //if player is not newbie, backbutton is active
+        if (!isPlayerNewbie) //if player is not newbie, backbutton is active
         {
             Backbutton.gameObject.SetActive(true);
         }
-        isPlayerNewbie = false;
     }
-    
+    public void maturePlayer()
+    {
+        isPlayerNewbie = false;
+        if (startguide == true)
+        {
+            GetComponentInParent<UIManager>().StartGame();
+        }
+        startguide = false;
+    }
+
     public void ExitButtonPressed()
     {
 #if UNITY_EDITOR    //Editor
