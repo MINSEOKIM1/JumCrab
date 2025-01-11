@@ -103,6 +103,11 @@ public class PlayerBehavior : MonoBehaviour
 
     public bool onSpiderWeb;
 
+    public bool die;
+    public Image climbFillImage;
+
+    public GameObject pauseCanvas;
+
     public GameObject currentDescendingPlatform;
 
     private Vignette _vignette;
@@ -144,6 +149,11 @@ public class PlayerBehavior : MonoBehaviour
         ApplyActualMove();
     }
 
+    public void Restart()
+    {
+        SceneManager.LoadScene("hojae/MinseoDevScene0");
+    }
+
     private void Update()
     {
         float sizecamera = _hitair ? 4 : 5;
@@ -155,6 +165,9 @@ public class PlayerBehavior : MonoBehaviour
         {
             pause = !pause;
             _playerInput.pause = false;
+            
+            pauseCanvas.SetActive(pause);
+            
         }
 
         if (_isClimbing) _climbGuage -= Time.deltaTime;
@@ -508,6 +521,7 @@ public class PlayerBehavior : MonoBehaviour
     private void ClimbSliderUpdate()
     {
         climbSlider.value = Mathf.Lerp(climbSlider.value, _climbGuage / maxClimbGauge, hpSliderChangeSpeed * Time.deltaTime);
+        climbFillImage.color = _climbGuage / maxClimbGauge < 0.3f ? Color.red : Color.green;
     }
 
     private void DamageCheck()
@@ -522,7 +536,7 @@ public class PlayerBehavior : MonoBehaviour
                     _getHitInitially = false;
                     _noDamageTimeElapsed = noDamageTime;
 
-                    
+                    touchingDescendingPlatform = false;
                     // JUMP!
                     _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
                     _isClimbing = false;

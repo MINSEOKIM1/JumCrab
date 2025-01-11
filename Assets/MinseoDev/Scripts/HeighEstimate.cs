@@ -25,6 +25,6 @@ public class HeighEstimate : MonoBehaviour
         
         currentHeight = Mathf.Clamp(Mathf.Round((player.position.y - _startOffsetY) * 40), 0, Mathf.Infinity);
         float hpt = currentHeight / _timeElapsed;
-        text.text = "HEIGHT : " + currentHeight + "\nHPT : " + hpt;
+        text.text = "Height : " + currentHeight;
     }
 }
