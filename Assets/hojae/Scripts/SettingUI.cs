@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class SettingUI : MonoBehaviour
 {
     [SerializeField] private AudioSource BGMPlayer;
-
-    [SerializeField] private Slider Slider;
+    [SerializeField] private AudioSource SFXPlayer;
+    
+    [SerializeField] private Slider BGMSlider;
+    [SerializeField] private Slider SFXSlider;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +18,8 @@ public class SettingUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        BGMPlayer.volume = Slider.value;
+        BGMPlayer.volume = BGMSlider.value;
+        SFXPlayer.volume = SFXSlider.value;
+        
     }
 }
