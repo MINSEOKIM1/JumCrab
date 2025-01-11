@@ -3,20 +3,21 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Goal
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
+  - ground
+  - wall
+  - descending
+  - ignore
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - DescendingGround
   - 
   - 
   - 
