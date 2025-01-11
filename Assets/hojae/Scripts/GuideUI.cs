@@ -3,17 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class GuideUI : MonoBehaviour
 {
     [SerializeField] private GameObject[] guidePanel;
-    private int currentPanel;
-    
-    // Start is called before the first frame update
-    private void Awake()
-    {
-    }
 
+    [SerializeField] private GameObject flexible;
+    [SerializeField] private Sprite comicImage;
+    [SerializeField] private Sprite creditImage;
+    private int currentPanel;
+    private bool isComicWatched = false;
+    
     #region Method
 
     public void guideInit()
@@ -28,6 +29,18 @@ public class GuideUI : MonoBehaviour
 
     public void ChangeGuidePanel()
     {
+        if (currentPanel == 1)
+        {
+            if (isComicWatched == false)
+            {
+                flexible.GetComponent<Image>().sprite = comicImage;
+                isComicWatched = true;
+            }
+            else
+            {
+                flexible.GetComponent<Image>().sprite = creditImage;
+            }
+        }
         guidePanel[currentPanel].gameObject.SetActive(false);
         guidePanel[currentPanel + 1].gameObject.SetActive(true);
         currentPanel += 1;

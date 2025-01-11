@@ -7,15 +7,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-
-enum TitleButton
-{
-    Start,
-    Setting,
-    Guide,
-    Exit
-}
-
 public class TitleUI : MonoBehaviour
 {
     #region Field
@@ -30,8 +21,8 @@ public class TitleUI : MonoBehaviour
     // 0 : start, 1 : setting, 2: guide, 3: exit 
     [SerializeField] private GameObject backGround;
     public bool isPlayerNewbie { get; set; }
-    private TitleButton currentOption;
-    private bool startguide;
+    private bool startguidePressed;
+    
     #endregion
     
     #region LifeCycle
@@ -58,7 +49,6 @@ public class TitleUI : MonoBehaviour
         {
             titleButton[i].gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         }
-        currentOption = TitleButton.Start;
         backGround.gameObject.SetActive(true);
         optionCanvas.gameObject.SetActive(true);
         settingCanvas.gameObject.SetActive(false);
@@ -73,7 +63,7 @@ public class TitleUI : MonoBehaviour
         //start game
         if (isPlayerNewbie) //if Newbie, then show guide
         {
-            startguide = true;
+            startguidePressed = true;
             GuideButtonPressed();
         }
     }
@@ -98,14 +88,14 @@ public class TitleUI : MonoBehaviour
             Backbutton.gameObject.SetActive(true);
         }
     }
+    
     public void maturePlayer()
     {
         isPlayerNewbie = false;
-        if (startguide == true)
+        if (startguidePressed == true)
         {
             GetComponentInParent<UIManager>().StartGame();
         }
-        startguide = false;
     }
 
     public void ExitButtonPressed()
