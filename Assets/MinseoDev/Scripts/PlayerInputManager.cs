@@ -27,6 +27,11 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
+    public void Pause()
+    {
+        pause = true;
+    }
+    
     public void OnPause(InputAction.CallbackContext value)
     {
         if (value.started)
