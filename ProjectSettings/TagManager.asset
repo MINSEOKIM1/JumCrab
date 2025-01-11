@@ -11,12 +11,10 @@ TagManager:
   - Player
   - Water
   - UI
-
-  - Ground
-  - Wall
-  - Descending
-  - PlayerIgnore
-
+  - ground
+  - wall
+  - descending
+  - ignore
   - 
   - 
   - 
