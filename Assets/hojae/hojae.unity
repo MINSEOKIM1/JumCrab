@@ -410,8 +410,8 @@ MonoBehaviour:
   BGMPlayer: {fileID: 415817083}
   SFXPlayer: {fileID: 415817085}
   TitleBGMClip: {fileID: 8300000, guid: 6a0d99e5f39a03e43b4e8299dc6b4353, type: 3}
-  ingameBGMClip1: {fileID: 8300000, guid: 32f90b78ba4154a41977276659873266, type: 3}
-  ingameBGMClip2: {fileID: 8300000, guid: 5284b78968a34834c91dc5161b87a094, type: 3}
+  OnButtonClip: {fileID: 8300000, guid: a811dc6459447c84298b9323df89dba0, type: 3}
+  ClickButtonClip: {fileID: 8300000, guid: d634815f2480fb94b8be841fcc29bfef, type: 3}
 --- !u!82 &415817083
 AudioSource:
   m_ObjectHideFlags: 0
@@ -751,7 +751,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c31d2c744c169e448a2cb55958f03c8f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4138d22604e7e934b91250d907a40b14, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -769,6 +769,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466850503}
   m_CullTransparentMesh: 1
+--- !u!1 &556075789
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 556075791}
+  - component: {fileID: 556075790}
+  m_Layer: 0
+  m_Name: DataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &556075790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556075789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87aa310c6281144888052dcdd05ab9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &556075791
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 556075789}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.6954875, y: -3.0908725, z: -0.1208478}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &559275127
 GameObject:
   m_ObjectHideFlags: 0
@@ -846,7 +890,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 651724364}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1645,6 +1689,18 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
+        - m_Target: {fileID: 1033660686}
+          m_TargetAssemblyTypeName: CommonButton, Assembly-CSharp
+          m_MethodName: OnPointClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
         - m_Target: {fileID: 680391795}
           m_TargetAssemblyTypeName: TitleUI, Assembly-CSharp
           m_MethodName: SettingButtonPressed
@@ -1702,6 +1758,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flickvalue: 0.0025
+  soundManager: {fileID: 415817081}
 --- !u!1 &1040848789
 GameObject:
   m_ObjectHideFlags: 0
@@ -2911,7 +2968,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3177,6 +3234,18 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
+        - m_Target: {fileID: 1916254057}
+          m_TargetAssemblyTypeName: CommonButton, Assembly-CSharp
+          m_MethodName: OnPointClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
         - m_Target: {fileID: 680391795}
           m_TargetAssemblyTypeName: TitleUI, Assembly-CSharp
           m_MethodName: GuideButtonPressed
@@ -3234,6 +3303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flickvalue: 0.0025
+  soundManager: {fileID: 415817081}
 --- !u!1 &1947123683
 GameObject:
   m_ObjectHideFlags: 0
@@ -3271,6 +3341,18 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
+        - m_Target: {fileID: 1947123688}
+          m_TargetAssemblyTypeName: CommonButton, Assembly-CSharp
+          m_MethodName: OnPointClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
         - m_Target: {fileID: 680391795}
           m_TargetAssemblyTypeName: TitleUI, Assembly-CSharp
           m_MethodName: BackButtonPressed
@@ -3385,6 +3467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flickvalue: 0.0025
+  soundManager: {fileID: 415817081}
 --- !u!1 &1978311647
 GameObject:
   m_ObjectHideFlags: 0
@@ -3569,6 +3652,18 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
+        - m_Target: {fileID: 2018150216}
+          m_TargetAssemblyTypeName: CommonButton, Assembly-CSharp
+          m_MethodName: OnPointClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
         - m_Target: {fileID: 680391795}
           m_TargetAssemblyTypeName: TitleUI, Assembly-CSharp
           m_MethodName: ExitButtonPressed
@@ -3626,6 +3721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flickvalue: 0.0025
+  soundManager: {fileID: 415817081}
 --- !u!1 &2054497452
 GameObject:
   m_ObjectHideFlags: 0
@@ -3682,6 +3778,18 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
+        - m_Target: {fileID: 2054497457}
+          m_TargetAssemblyTypeName: CommonButton, Assembly-CSharp
+          m_MethodName: OnPointClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
         - m_Target: {fileID: 680391795}
           m_TargetAssemblyTypeName: TitleUI, Assembly-CSharp
           m_MethodName: StartButtonPressed
@@ -3789,6 +3897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flickvalue: 0.0025
+  soundManager: {fileID: 415817081}
 --- !u!1 &2114395338
 GameObject:
   m_ObjectHideFlags: 0
@@ -4097,6 +4206,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 8613830688798964677, guid: 0acfe45c60c7bb04e83428f287b342d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9108062392716291996, guid: 0acfe45c60c7bb04e83428f287b342d9, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -4112,5 +4225,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1529304614}
   - {fileID: 269516958}
-  - {fileID: 651724367}
   - {fileID: 415817084}
+  - {fileID: 556075791}
+  - {fileID: 651724367}
