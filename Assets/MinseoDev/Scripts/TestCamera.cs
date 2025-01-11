@@ -17,7 +17,7 @@ public class TestCamera : MonoBehaviour
     private void Update()
     {
         Vector3 targetPos;
-        if (playerTransform.GetComponent<PlayerBehavior>()._hitair)
+        if (playerTransform.GetComponent<PlayerBehavior>()._hitair || playerTransform.GetComponent<PlayerBehavior>().die)
         {
             targetPos = playerTransform.position + Vector3.back * 10;
         }
