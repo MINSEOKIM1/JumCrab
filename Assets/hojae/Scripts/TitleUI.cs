@@ -28,6 +28,7 @@ public class TitleUI : MonoBehaviour
     [SerializeField] private GameObject settingCanvas;
     [SerializeField] private GameObject optionCanvas; //GameObject
     // 0 : start, 1 : setting, 2: guide, 3: exit 
+    [SerializeField] private GameObject backGround;
     public bool isPlayerNewbie { get; set; }
     private TitleButton currentOption;
     private bool startguide;
@@ -54,6 +55,7 @@ public class TitleUI : MonoBehaviour
     public void Titleinit()
     {
         currentOption = TitleButton.Start;
+        backGround.gameObject.SetActive(true);
         optionCanvas.gameObject.SetActive(true);
         settingCanvas.gameObject.SetActive(false);
         guideCanvas.gameObject.SetActive(false);

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayUI : MonoBehaviour
 {
+    [SerializeField] private GameObject hpbarPanel;
+    [SerializeField] [Range(0, 1)] private float hp;
+    private 
     // Start is called before the first frame update
     void Start()
     {
