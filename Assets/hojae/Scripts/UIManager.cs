@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 enum gameState
@@ -21,11 +22,18 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas StopCanvas;
     private StopUI stopUI;
     private gameState GameState;    //tmp : can be change
+    [SerializeField] private float readyTime;
+    [SerializeField] private GameObject RTG;
+    [SerializeField] private GameObject resumeButton;
+
+    private Coroutine playGame;
+    
     void Start()
     {
         GameState = gameState.Title;
         titleUI = TitleCanvas.GetComponent<TitleUI>();
         stopUI = StopCanvas.GetComponent<StopUI>();
+        Time.timeScale = 0;
     }
 
     // Update is called once per frame
@@ -37,6 +45,10 @@ public class UIManager : MonoBehaviour
                 TitleCanvas.gameObject.SetActive(true);
                 PlayCanvas.gameObject.SetActive(false);
                 StopCanvas.gameObject.SetActive(false);
+                if (playGame != null)
+                {
+                    StopCoroutine(playGame);
+                }
                 break;
             case gameState.Play:
                 TitleCanvas.gameObject.SetActive(false);
@@ -60,20 +72,42 @@ public class UIManager : MonoBehaviour
     {
         if (!titleUI.isPlayerNewbie) //if player is not Newbie
         {
+            Time.timeScale = 1;
             GameState = gameState.Play; //game start
         }
     }
     public void PauseGame()
     {
         GameState = gameState.Stop;
+        RTG.gameObject.SetActive(false);
+        resumeButton.gameObject.SetActive(true);
         Time.timeScale = 0;
     }
     
     public void ResumeGame()
     {
-        GameState = gameState.Play;
+        //start RTG
+        RTG.gameObject.SetActive(true);
+        resumeButton.gameObject.SetActive(false);
         Time.timeScale = 1;
+        //then playGame  
+        playGame = StartCoroutine(DelayedAction(3.2f));
     }
-
+    
+    private IEnumerator DelayedAction(float t) //written by chat-gpt
+    {
+        yield return new WaitForSeconds(t); //
+        ExecuteAction(); //
+    }
+    private void ExecuteAction()    
+    {
+        GameState = gameState.Play;
+    }
+    
+    public void HomeButtonPressed()
+    {
+        GameState = gameState.Title;
+        titleUI.Titleinit();
+    }
 
 }
