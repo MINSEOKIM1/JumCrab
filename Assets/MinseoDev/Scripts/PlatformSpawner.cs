@@ -42,6 +42,7 @@ public class PlatformSpawner : MonoBehaviour
 
     private void Create()
     {
+        // < 6000
         // Normal 100 당 나오는 플랫폼들 랜덤
         for (int i = (int) yInterval[0]; i < 20000; i+= (int) yInterval[0])
         {
@@ -91,6 +92,80 @@ public class PlatformSpawner : MonoBehaviour
             if (i > 6000) break;
             if (Random.Range(0f, 1f) > descendingProbability) continue; 
             var platform = Instantiate(platformPrefabs[2],
+                new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
+                Quaternion.identity);
+            
+            _platforms.Add(platform);
+        }
+        
+        // phase 2
+        // 80 0.6
+        for (int i = 6000 + (int)yInterval[3]; i < 15000; i+=(int)yInterval[3])
+        {if (i > 10000) break;
+        
+            if (Random.Range(0f, 1f) > 0.6) continue; 
+            var platform = Instantiate(platformPrefabs[3],
+                new Vector3(i % 2 == 0? Random.Range(minX, minX*0.3f) : Random.Range(maxX*0.3f, maxX)
+                        , _startY + i / 40, 0),
+                Quaternion.identity);
+            
+            _platforms.Add(platform);
+        }
+        
+        // 100 0.4
+        for (int i = 6000 + (int)yInterval[4]; i < 15000; i+=(int)yInterval[4])
+        {if (i > 10000) break;
+        
+            if (Random.Range(0f, 1f) > 0.4) continue; 
+            var platform = Instantiate(platformPrefabs[4],
+                new Vector3(Random.Range(minX, maxX) * 0.5f, _startY + i / 40, 0),
+                Quaternion.identity);
+            
+            _platforms.Add(platform);
+        }
+        
+        // 420 0.8
+        for (int i = 6000 + (int)yInterval[5]; i < 15000; i+=(int)yInterval[5])
+        {if (i > 10000) break;
+        
+            if (Random.Range(0f, 1f) > 0.8) continue; 
+            var platform = Instantiate(platformPrefabs[4],
+                new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
+                Quaternion.identity);
+            
+            _platforms.Add(platform);
+        }
+        
+        // 100 0.2
+        for (int i = 6000 + (int)yInterval[6]; i < 15000; i+=(int)yInterval[6])
+        {if (i > 10000) break;
+        
+            if (Random.Range(0f, 1f) > 0.2) continue; 
+            var platform = Instantiate(platformPrefabs[5],
+                new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
+                Quaternion.identity);
+            
+            _platforms.Add(platform);
+        }
+        
+        // 140 0.2
+        for (int i = 6000 + (int)yInterval[7]; i < 15000; i+=(int)yInterval[7])
+        {if (i > 10000) break;
+        
+            if (Random.Range(0f, 1f) > 0.2) continue; 
+            var platform = Instantiate(platformPrefabs[5],
+                new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
+                Quaternion.identity);
+            
+            _platforms.Add(platform);
+        }
+        
+        // 100 0.1
+        for (int i = 6000 + (int)yInterval[8]; i < 15000; i+=(int)yInterval[8])
+        {if (i > 10000) break;
+        
+            if (Random.Range(0f, 1f) > 0.1) continue; 
+            var platform = Instantiate(platformPrefabs[6],
                 new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
                 Quaternion.identity);
             

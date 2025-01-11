@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4644178518793754956}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.78, y: 3.62, z: 0}
   m_LocalScale: {x: 1.5, y: 0.15, z: 1}
   m_ConstrainProportionsScale: 0
@@ -166,6 +166,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   descending: 0
   init: 0
+  camera: {fileID: 0}
+  spider: {fileID: 7502484119429249451, guid: aa3688f9ce4124ea3b066673284aba7c, type: 3}
   descendingSpeed: 1
 --- !u!1 &8240695766820423324
 GameObject:

@@ -11,6 +11,8 @@ public class VanshingPlatform : MonoBehaviour
     private BoxCollider2D _box;
     private Rigidbody2D _rigid;
 
+    public Animator animator;
+
     private bool _collapsing = false;
     private float _elapsed = 2f;
     
@@ -62,6 +64,7 @@ public class VanshingPlatform : MonoBehaviour
             yield return null;
         }
 
+        animator.SetTrigger("vanish");
         _rigid.bodyType = RigidbodyType2D.Dynamic;
         _box.isTrigger = true;
         _rigid.AddTorque(Random.Range(0f, 3f));
