@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
-enum gameState
+public enum gameState
 {
     Title,
     Play,
@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas PlayCanvas;
     [SerializeField] private Canvas StopCanvas;
     private StopUI stopUI;
-    private gameState GameState;    //tmp : can be change
+    static public gameState GameState;    //tmp : can be change
     
     [Header("Pause")]
     [SerializeField] private float readyTime;
@@ -29,15 +29,19 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject resumeButton;
     [SerializeField] private GameObject restartButton;
     [SerializeField] private GameObject homeButton;
-
-    private Coroutine playGame;
     
+    [SerializeField] private GameObject soundManager;
+    BGM bgm;
+    private Coroutine playGame;
+    private int eh = 1;
     void Start()
     {
         GameState = gameState.Title;
         titleUI = TitleCanvas.GetComponent<TitleUI>();
         stopUI = StopCanvas.GetComponent<StopUI>();
         Time.timeScale = 0;
+        bgm = soundManager.GetComponent<BGM>();
+        bgm.startTitleBGM();
     }
 
     // Update is called once per frame
@@ -79,6 +83,7 @@ public class UIManager : MonoBehaviour
             Time.timeScale = 1;
             GameState = gameState.Play; //game start
         }
+        bgm.startIngameBGM(eh);
     }
     public void PauseGame()
     {
@@ -98,24 +103,26 @@ public class UIManager : MonoBehaviour
         restartButton.gameObject.SetActive(false);
         homeButton.gameObject.SetActive(false);
         Time.timeScale = 1;
-        //then playGame  
+        //then playGame
         playGame = StartCoroutine(DelayedAction(3.0f));
     }
     
     private IEnumerator DelayedAction(float t) //written by chat-gpt
     {
-        yield return new WaitForSeconds(t); //
+        yield return new WaitForSeconds(t);
         ExecuteAction(); //
     }
-    private void ExecuteAction()    
+    private void ExecuteAction()
     {
         GameState = gameState.Play;
+        bgm.startIngameBGM(eh);
     }
     
     public void HomeButtonPressed()
     {
         GameState = gameState.Title;
         titleUI.Titleinit();
+        bgm.startTitleBGM();
     }
 
 }

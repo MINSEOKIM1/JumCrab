@@ -54,6 +54,10 @@ public class TitleUI : MonoBehaviour
     #region Method
     public void Titleinit()
     {
+        for(int i = 0; i < titleButton.Length; i++)
+        {
+            titleButton[i].gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+        }
         currentOption = TitleButton.Start;
         backGround.gameObject.SetActive(true);
         optionCanvas.gameObject.SetActive(true);
