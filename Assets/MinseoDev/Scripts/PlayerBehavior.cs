@@ -70,6 +70,9 @@ public class PlayerBehavior : MonoBehaviour
     public bool _grounded;
     public bool _isClimbing;
 
+    public GameObject spiderTimer;
+    public Image spiderFade;
+
     public float _coyoteTimeElapsed;
     
     public float _jumpTimeOutElapsed;
@@ -699,7 +702,18 @@ public class PlayerBehavior : MonoBehaviour
     IEnumerator OnSpiderWeb()
     {
         onSpiderWeb = true;
-        yield return new WaitForSeconds(1f);
+        float time = 0;
+        spiderTimer.SetActive(true);
+
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            spiderFade.fillAmount = time;
+            yield return null;
+            
+        }
         onSpiderWeb = false;
+        
+        spiderTimer.SetActive(false);
     }
 }

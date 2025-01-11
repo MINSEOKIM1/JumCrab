@@ -102,8 +102,9 @@ public class PlatformSpawner : MonoBehaviour
         // 80 0.6
         for (int i = 6000 + (int)yInterval[3]; i < 15000; i+=(int)yInterval[3])
         {if (i > 10000) break;
-        
-            if (Random.Range(0f, 1f) > 0.6)
+
+            float pr = Random.Range(0f, 1f);
+            if (pr > 0.7)
             {
                 var platform = Instantiate(platformPrefabs[6],
                     new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
@@ -111,9 +112,18 @@ public class PlatformSpawner : MonoBehaviour
             
                 _platforms.Add(platform);
             }
-            else
+            else if (pr > 0.4f)
             {
                 var platform = Instantiate(platformPrefabs[3],
+                    new Vector3(i % 2 == 0 ? Random.Range(minX, minX * 0.3f) : Random.Range(maxX * 0.3f, maxX)
+                        , _startY + i / 40, 0),
+                    Quaternion.identity);
+
+                _platforms.Add(platform);
+            }
+            else
+            {
+                var platform = Instantiate(platformPrefabs[7],
                     new Vector3(i % 2 == 0 ? Random.Range(minX, minX * 0.3f) : Random.Range(maxX * 0.3f, maxX)
                         , _startY + i / 40, 0),
                     Quaternion.identity);
