@@ -147,6 +147,11 @@ public class PlayerBehavior : MonoBehaviour
         }
     }
 
+    public void GoBackToTitle()
+    {
+        SceneManager.LoadScene("hojae/hojae");
+    }
+
     private void FixedUpdate()
     {
         GroundCheck();
@@ -241,6 +246,7 @@ public class PlayerBehavior : MonoBehaviour
     private IEnumerator DieFadeStart()
     {
         float time = 0;
+        dieFade.gameObject.SetActive(true);
         while (time < 1)
         {
             time += Time.deltaTime;
@@ -250,6 +256,7 @@ public class PlayerBehavior : MonoBehaviour
         }
         
         time = 0;
+        diePicture.gameObject.SetActive(true);
         while (time < 1)
         {
             time += Time.deltaTime;
@@ -257,6 +264,7 @@ public class PlayerBehavior : MonoBehaviour
             diePicture.color = new Color(1, 1, 1, time / 1);
             yield return null;
         }
+        
     }
 
     private void GroundCheck()
