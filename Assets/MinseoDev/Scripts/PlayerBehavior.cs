@@ -49,10 +49,15 @@ public class PlayerBehavior : MonoBehaviour
     [SerializeField] private Volume postProcessing;
 
     [SerializeField] private Transform footPosition;
+
+    [SerializeField] private float groundCheckTime;
      
 
     // player's current state
     public float _speed;
+
+    public float _groundChekcTimeElapsed;
+    public float _previousVelocityY;
 
     public bool _grounded;
     public bool _isClimbing;
@@ -137,6 +142,15 @@ public class PlayerBehavior : MonoBehaviour
         _jumpTimeOutElapsed -= Time.deltaTime;
         _noDamageTimeElapsed -= Time.deltaTime;
         _coyoteTimeElapsed -= Time.deltaTime;
+        _groundChekcTimeElapsed -= Time.deltaTime;
+
+        if (gettingHit) _coyoteTimeElapsed = coyoteTime;
+
+        if (Mathf.Abs(_previousVelocityY - _rigidbody.velocity.y) > 0.1f)
+        {
+            Debug.Log(Mathf.Abs(_previousVelocityY - _rigidbody.velocity.y));
+            _groundChekcTimeElapsed = groundCheckTime;
+        }
         
         if (_animator.GetCurrentAnimatorStateInfo(0).IsTag("jump")) _animator.SetBool(aniIdJump, false);
 
@@ -161,51 +175,61 @@ public class PlayerBehavior : MonoBehaviour
 
     private void GroundCheck()
     {
-        var raycastHit = Physics2D.Raycast(
-            footPosition.position, 
-            Vector2.down, 
-            groundCheckDistance, 
-            groundLayers);
-        
-        Debug.DrawRay(transform.position, 
-            Vector2.down * groundCheckDistance, 
-            Color.red);
+        float a = 0;
+        while (a < 1)
+        {
+            var raycastHit = Physics2D.Raycast(
+                footPosition.position,
+                Vector2.down,
+                groundCheckDistance * a,
+                groundLayers);
+            a += 0.01f;
 
-        if (raycastHit)
-        {
-            _coyoteTimeElapsed = coyoteTime;
-            if (!_grounded && _rigidbody.velocity.y <= 0)
+            Debug.DrawRay(footPosition.position,
+                Vector2.down * groundCheckDistance,
+                Color.red);
+
+            if (raycastHit)
             {
-                _grounded = true;
-                if (_isClimbing) _isClimbing = false;
-                
-                // 특수 기믹 확인
-                SpecialPlatformCheck(raycastHit);
-                
-                // 애니메
-                if (_jumpTimeOutElapsed < 0) _animator.SetBool(aniIdGrounded, true);
-                _animator.SetBool(aniIdJump, false);
-            } 
-        }
-        else
-        {
-            if (_grounded)
-            {
-                _grounded = false;
-                
-                // 애니메
-                _animator.SetBool(aniIdGrounded, false);
+                if (!_grounded && _rigidbody.velocity.y <= 0 && footPosition.position.y > raycastHit.collider.bounds.max.y)
+                {
+                    _coyoteTimeElapsed = coyoteTime;
+                    Debug.Log(
+                        $"bounds max.y {raycastHit.collider.bounds.max.y} and transform.position.y : {transform.position.y}");
+                    _grounded = true;
+                    if (_isClimbing) _isClimbing = false;
+
+                    // 특수 기믹 확인
+                    StartCoroutine(SpecialPlatformCheck(raycastHit));
+
+                    // 애니메
+                    if (_jumpTimeOutElapsed < 0) _animator.SetBool(aniIdGrounded, true);
+                    _animator.SetBool(aniIdJump, false);
+                }
+
+                break;
             }
-
-            if (_coyoteTimeElapsed < 0)
+            
+            else
             {
-                if (currentDescendingPlatform) currentDescendingPlatform.layer = 6;
-                touchingDescendingPlatform = false;
+                if (_grounded)
+                {
+                    _grounded = false;
+
+                    // 애니메
+                    _animator.SetBool(aniIdGrounded, false);
+                }
+
+                if (_coyoteTimeElapsed < 0)
+                {
+                    if (currentDescendingPlatform) currentDescendingPlatform.layer = 6;
+                    touchingDescendingPlatform = false;
+                }
             }
         }
     }
 
-    private void SpecialPlatformCheck(RaycastHit2D hit)
+    private IEnumerator SpecialPlatformCheck(RaycastHit2D hit)
     {
         BoxCollider2D box = hit.collider as BoxCollider2D;
         if (box != null)
@@ -223,7 +247,7 @@ public class PlayerBehavior : MonoBehaviour
                 {
                     hit.collider.GetComponent<VanshingPlatform>().Vanishing();
                 }
-        
+
                 if (hit.collider.GetComponent<DescendingPlatform>())
                 {
                     touchingDescendingPlatform = true;
@@ -232,13 +256,13 @@ public class PlayerBehavior : MonoBehaviour
                     currentDescendingPlatform.layer = 8;
                     a.descending = true;
                 }
+                yield return new WaitForSeconds(groundCheckTime * 1.1f);
             }
             else
             {
                 Debug.Log("Ray hit inside the BoxCollider2D");
             }
         }
-        
     }
     
     private bool IsPointOnBoundsEdge(Vector2 point, Bounds bounds)
@@ -333,7 +357,12 @@ public class PlayerBehavior : MonoBehaviour
                 _rigidbody.velocity -= Vector2.up * _rigidbody.velocity.y * 0.7f;
                 _rigidbody.velocity += Vector2.up * waterConstant;
             }
-            if (touchingDescendingPlatform && _rigidbody.velocity.y >= 0) _rigidbody.velocity -= Vector2.up * 2;
+
+            if (touchingDescendingPlatform && _rigidbody.velocity.y >= 0)
+            {
+                Debug.Log("가지마라");
+                _rigidbody.velocity -= Vector2.up * 2;
+            }
         }
 }
 
@@ -367,6 +396,8 @@ public class PlayerBehavior : MonoBehaviour
                     _speed = _isClimbingLeftWall ? actualWallJumpPower : -actualWallJumpPower;
                     _isClimbing = false;
                     _playerInput.jump = false;
+                    
+                    touchingDescendingPlatform = false;
                     
                     _animator.SetBool(aniIdGrounded, false);
                     _animator.SetBool(aniIdJump, true);
