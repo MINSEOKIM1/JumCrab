@@ -194,8 +194,6 @@ public class PlayerBehavior : MonoBehaviour
                 if (!_grounded && _rigidbody.velocity.y <= 0 && footPosition.position.y > raycastHit.collider.bounds.max.y)
                 {
                     _coyoteTimeElapsed = coyoteTime;
-                    Debug.Log(
-                        $"bounds max.y {raycastHit.collider.bounds.max.y} and transform.position.y : {transform.position.y}");
                     _grounded = true;
                     if (_isClimbing) _isClimbing = false;
 

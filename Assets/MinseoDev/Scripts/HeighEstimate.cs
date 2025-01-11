@@ -21,7 +21,7 @@ public class HeighEstimate : MonoBehaviour
     {
         _timeElapsed += Time.deltaTime;
         
-        float height = Mathf.Clamp(Mathf.Round((player.position.y - _startOffsetY )* 40), 0, Mathf.Infinity);
+        float height = Mathf.Clamp(Mathf.Round((player.position.y - _startOffsetY) * 40), 0, Mathf.Infinity);
         float hpt = height / _timeElapsed;
         text.text = "HEIGHT : " + height + "\nHPT : " + hpt;
     }
