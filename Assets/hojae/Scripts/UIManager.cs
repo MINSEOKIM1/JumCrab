@@ -22,9 +22,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas StopCanvas;
     private StopUI stopUI;
     private gameState GameState;    //tmp : can be change
+    
+    [Header("Pause")]
     [SerializeField] private float readyTime;
     [SerializeField] private GameObject RTG;
     [SerializeField] private GameObject resumeButton;
+    [SerializeField] private GameObject restartButton;
+    [SerializeField] private GameObject homeButton;
 
     private Coroutine playGame;
     
@@ -81,6 +85,8 @@ public class UIManager : MonoBehaviour
         GameState = gameState.Stop;
         RTG.gameObject.SetActive(false);
         resumeButton.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
+        homeButton.gameObject.SetActive(true);
         Time.timeScale = 0;
     }
     
@@ -89,9 +95,11 @@ public class UIManager : MonoBehaviour
         //start RTG
         RTG.gameObject.SetActive(true);
         resumeButton.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
+        homeButton.gameObject.SetActive(false);
         Time.timeScale = 1;
         //then playGame  
-        playGame = StartCoroutine(DelayedAction(3.2f));
+        playGame = StartCoroutine(DelayedAction(3.0f));
     }
     
     private IEnumerator DelayedAction(float t) //written by chat-gpt
