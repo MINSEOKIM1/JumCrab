@@ -43,13 +43,14 @@ public class PlatformSpawner : MonoBehaviour
     private void Create()
     {
         // Normal 100 당 나오는 플랫폼들 랜덤
-        for (int i = 1; i < 250; i++)
+        for (int i = (int) yInterval[0]; i < 20000; i+= (int) yInterval[0])
         {
+            if (i > 11000) break;
             float random = Random.Range(0f, 1f);
             if (random < 0.5f)
             {
                 var platform = Instantiate(platformPrefabs[0],
-                    new Vector3(i % 2 == 0? Random.Range(minX, minX*0.3f) : Random.Range(maxX*0.3f, maxX), _startY + yInterval[0] * i / 40, 0),
+                    new Vector3(i % 2 == 0? Random.Range(minX, minX*0.3f) : Random.Range(maxX*0.3f, maxX), _startY + i / 40, 0),
                     Quaternion.identity);
 
                 _platforms.Add(platform);
@@ -57,7 +58,7 @@ public class PlatformSpawner : MonoBehaviour
             else if (random < 0.8f)
             {
                 var platform = Instantiate(platformPrefabs[1],
-                    new Vector3(Random.Range(minX, maxX) * 0.5f, _startY + yInterval[0] * i / 40, 0),
+                    new Vector3(Random.Range(minX, maxX) * 0.5f, _startY +  i / 40, 0),
                     Quaternion.identity);
             
                 _platforms.Add(platform);
@@ -65,7 +66,7 @@ public class PlatformSpawner : MonoBehaviour
             else
             {
                 var platform = Instantiate(platformPrefabs[2],
-                    new Vector3(Random.Range(minX, maxX), _startY + yInterval[0] * i / 40, 0),
+                    new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
                     Quaternion.identity);
             
                 _platforms.Add(platform);
@@ -73,22 +74,24 @@ public class PlatformSpawner : MonoBehaviour
         }
         
         // Vanishing per 220
-        for (int i = 1; i < 250; i++)
-        {
+        for (int i = (int)yInterval[1]; i < 15000; i+=(int)yInterval[1])
+        {if (i > 11000) break;
+        
             if (Random.Range(0f, 1f) > vanishingProbability) continue; 
             var platform = Instantiate(platformPrefabs[1],
-                new Vector3(Random.Range(minX, maxX) * 0.5f, _startY + yInterval[1] * i / 40, 0),
+                new Vector3(Random.Range(minX, maxX) * 0.5f, _startY + i / 40, 0),
                 Quaternion.identity);
             
             _platforms.Add(platform);
         }
 
         // Descending 310
-        for (int i = 1; i < 250; i++)
+        for (int i = (int)yInterval[2]; i < 15000; i+=(int)yInterval[2])
         {
+            if (i > 11000) break;
             if (Random.Range(0f, 1f) > descendingProbability) continue; 
             var platform = Instantiate(platformPrefabs[2],
-                new Vector3(Random.Range(minX, maxX), _startY + yInterval[2] * i / 40, 0),
+                new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),
                 Quaternion.identity);
             
             _platforms.Add(platform);

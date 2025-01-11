@@ -26,13 +26,8 @@ public class TestCamera : MonoBehaviour
             targetPos = new Vector3(0, playerTransform.position.y + _yCameraOffset, -10);
         }
 
-        if (Vector3.Distance(transform.position, targetPos) < 5f)
-        {
-            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime);
-        }
-        else
-        {
-            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * 10);
-        }
+        
+        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime);
+        
     }
 }

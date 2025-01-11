@@ -416,6 +416,39 @@ public class PlayerBehavior : MonoBehaviour
         }
     }
 
+    public void Jump(float power)
+    {
+        if (!_isClimbing)
+        {
+            _jumpTimeOutElapsed = jumpTimeOut;
+            _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
+            _rigidbody.AddForce(Vector2.up * power, ForceMode2D.Impulse);
+            _playerInput.jump = false;
+                    
+            _animator.SetBool(aniIdGrounded, false);
+            _animator.SetBool(aniIdJump, true);
+            touchingDescendingPlatform = false;
+            if (currentDescendingPlatform) currentDescendingPlatform.layer = 6;
+        }
+        else
+        {
+            _climbGuage -= 0.3f;
+            _jumpTimeOutElapsed = jumpTimeOut;
+            _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
+            _rigidbody.AddForce(
+                Vector2.up * power,
+                ForceMode2D.Impulse);
+            _speed = _isClimbingLeftWall ? power : -power;
+            _isClimbing = false;
+            _playerInput.jump = false;
+                    
+            touchingDescendingPlatform = false;
+                    
+            _animator.SetBool(aniIdGrounded, false);
+            _animator.SetBool(aniIdJump, true);
+        }
+    }
+
     private void RotateBody()
     {
         float targetAngle = 0;

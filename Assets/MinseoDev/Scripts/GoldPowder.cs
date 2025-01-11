@@ -1,10 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClimbRestore : MonoBehaviour
+public class GoldPowder : MonoBehaviour
 {
+    public float power;
     private void Start()
     {
         StartCoroutine(DestroyThis());
@@ -19,16 +19,7 @@ public class ClimbRestore : MonoBehaviour
     {
         if (col.gameObject.tag == "Player")
         {
-            col.gameObject.GetComponent<PlayerBehavior>()._climbGuage += 1;
-            Destroy(gameObject);
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.collider.tag == "Player")
-        {
-            col.collider.GetComponent<PlayerBehavior>()._climbGuage += 1;
+            col.gameObject.GetComponent<PlayerBehavior>().Jump(power);
             Destroy(gameObject);
         }
     }
