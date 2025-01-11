@@ -109,6 +109,9 @@ public class PlayerBehavior : MonoBehaviour
     public bool die;
     public Image climbFillImage;
 
+    public Image dieFade;
+    public Image diePicture;
+
     public GameObject pauseCanvas;
 
     public GameObject currentDescendingPlatform;
@@ -159,15 +162,24 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Update()
     {
-        float sizecamera = _hitair ? 4 : 5;
+        float sizecamera = _hitair || die ? 4 : 5;
+        _animator.SetBool("die", die);
+        
         camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, sizecamera, Time.deltaTime * 5);
         if (pause) Time.timeScale = 0;
         else Time.timeScale = 1;
 
-        if (_playerInput.pause)
+        if (die && Time.timeScale != 0)
+        {
+            Time.timeScale = 0.5f;
+            Time.fixedDeltaTime *= 0.5f;
+        } 
+
+        if (_playerInput.pause && !die)
         {
             pause = !pause;
             _playerInput.pause = false;
+
             
             pauseCanvas.SetActive(pause);
             
@@ -204,16 +216,47 @@ public class PlayerBehavior : MonoBehaviour
         _animator.SetFloat(aniIdWalk, _playerInput.move.x == 0? 0: 1);
 
 
-        if (_hp >= maxHp)
+        if (_hp >= maxHp && !die)
         {
+            // JUMP!
+            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
+            _isClimbing = false;
+            
+            StartCoroutine(DieFadeStart());
+                    
+            _jumpTimeOutElapsed = jumpTimeOut;
+            _rigidbody.velocity = Vector2.Scale(Vector2.right, _rigidbody.velocity);
+            _rigidbody.AddForce(Vector2.up * jumpPower / 2, ForceMode2D.Impulse);
 
-            SceneManager.LoadScene("hojae/MinseoDevScene0");
+            _vignetteIncrease = true;
+            die = true;
         }
         Jump();
         RotateBody();
         HpSliderUpdate();
         ClimbSliderUpdate();
         DamageCheck();
+    }
+
+    private IEnumerator DieFadeStart()
+    {
+        float time = 0;
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            
+            dieFade.color = new Color(0, 0, 0, time / 1);
+            yield return null;
+        }
+        
+        time = 0;
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            
+            diePicture.color = new Color(1, 1, 1, time / 1);
+            yield return null;
+        }
     }
 
     private void GroundCheck()
@@ -377,6 +420,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private void MoveHorizontally()
     {
+        if (die) return;
         if (_playerInput.move.x != 0)
         {
             if (_grounded || _isClimbing)
@@ -429,6 +473,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Jump()
     {
+        if (die) return;
         float actualJumpPower = gettingHit ? jumpPower / 2 : jumpPower;
         float actualWallJumpPower = gettingHit ? wallJumpPower / 2 : wallJumpPower;
         if (_coyoteTimeElapsed > 0 || _isClimbing)
