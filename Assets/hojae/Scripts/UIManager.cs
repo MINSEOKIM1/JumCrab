@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum gameState
 {
@@ -29,8 +30,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject resumeButton;
     [SerializeField] private GameObject restartButton;
     [SerializeField] private GameObject homeButton;
-    
     [SerializeField] private GameObject soundManager;
+    
+    
     BGM bgm;
     private Coroutine playGame;
     private int eh = 1;
@@ -80,10 +82,13 @@ public class UIManager : MonoBehaviour
     {
         if (!titleUI.isPlayerNewbie) //if player is not Newbie
         {
+            //merge
+            SceneManager.LoadScene("hojae/MinseoDevScene0");
+            /*
             Time.timeScale = 1;
             GameState = gameState.Play; //game start
+            */
         }
-        bgm.startIngameBGM(eh);
     }
     public void PauseGame()
     {
@@ -115,7 +120,6 @@ public class UIManager : MonoBehaviour
     private void ExecuteAction()
     {
         GameState = gameState.Play;
-        bgm.startIngameBGM(eh);
     }
     
     public void HomeButtonPressed()

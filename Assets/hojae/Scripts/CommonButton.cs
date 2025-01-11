@@ -12,11 +12,14 @@ public class CommonButton : MonoBehaviour
     private bool isBlinking = false; 
     private bool isPointerOver = false;    
     [SerializeField] private float flickvalue;
+    [SerializeField] private GameObject soundManager;
     Coroutine BlinkingCoroutine;
+    private BGM sound;
 
     private void Start()
     {
         targetImage = this.GetComponent<Image>();
+        sound = soundManager.GetComponent<BGM>();
     }
 
     void Update()
@@ -31,6 +34,12 @@ public class CommonButton : MonoBehaviour
     public void OnPointerEnter()
     {
         isPointerOver = true; // 커서가 올라갔음을 표시
+        sound.OnButton();
+    }
+
+    public void OnPointClick()
+    {
+        sound.ClickButton();
     }
 
     public void OnPointerExit()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,13 +17,16 @@ public class BGM : MonoBehaviour
     
     [Header("BGM")]
     [SerializeField] private AudioClip TitleBGMClip;
-    [SerializeField] private AudioClip ingameBGMClip1;
-    [SerializeField] private AudioClip ingameBGMClip2;
+    
+    [Header("SFX")]
+    [SerializeField] private AudioClip OnButtonClip;
+    [SerializeField] private AudioClip ClickButtonClip;
     
     void Start()
     {
-        bgmSlider.value = BGMPlayer.volume;
-        sfxSlider.value = SFXPlayer.volume;
+        
+        BGMPlayer.volume = DataManager.Instance.BGMVolume;
+        SFXPlayer.volume = DataManager.Instance.SFXVolume;
         BGMPlayer.Play();
     }
 
@@ -38,21 +42,15 @@ public class BGM : MonoBehaviour
         BGMPlayer.Play();
     }
     
-    public void startIngameBGM(int clip)
+    public void OnButton()
     {
-        switch (clip)
-        {
-            case 1:
-                BGMPlayer.clip = ingameBGMClip1;
-                break;
-            case 2:
-                BGMPlayer.clip = ingameBGMClip2;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-        BGMPlayer.Play();
+        SFXPlayer.clip = OnButtonClip;
+        SFXPlayer.PlayOneShot(OnButtonClip);
     }
     
-    
+    public void ClickButton()
+    {
+        SFXPlayer.clip = ClickButtonClip;
+        SFXPlayer.PlayOneShot(ClickButtonClip);
+    }
 }

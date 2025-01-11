@@ -13,13 +13,21 @@ public class SettingUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        BGMSlider.value = DataManager.Instance.BGMVolume;
+        SFXSlider.value = DataManager.Instance.SFXVolume;
     }
     // Update is called once per frame
     void Update()
     {
+        //merge
+        DataManager.Instance.BGMVolume = BGMSlider.value;
+        DataManager.Instance.SFXVolume = SFXSlider.value;
+        
+        BGMPlayer.volume = DataManager.Instance.BGMVolume;
+        SFXPlayer.volume = DataManager.Instance.SFXVolume;
+        /*
         BGMPlayer.volume = BGMSlider.value;
         SFXPlayer.volume = SFXSlider.value;
-        
+        */
     }
 }
