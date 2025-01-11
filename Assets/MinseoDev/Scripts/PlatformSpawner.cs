@@ -45,7 +45,7 @@ public class PlatformSpawner : MonoBehaviour
         // Normal 100 당 나오는 플랫폼들 랜덤
         for (int i = (int) yInterval[0]; i < 20000; i+= (int) yInterval[0])
         {
-            if (i > 11000) break;
+            if (i > 6000) break;
             float random = Random.Range(0f, 1f);
             if (random < 0.5f)
             {
@@ -75,7 +75,7 @@ public class PlatformSpawner : MonoBehaviour
         
         // Vanishing per 220
         for (int i = (int)yInterval[1]; i < 15000; i+=(int)yInterval[1])
-        {if (i > 11000) break;
+        {if (i > 6000) break;
         
             if (Random.Range(0f, 1f) > vanishingProbability) continue; 
             var platform = Instantiate(platformPrefabs[1],
@@ -88,7 +88,7 @@ public class PlatformSpawner : MonoBehaviour
         // Descending 310
         for (int i = (int)yInterval[2]; i < 15000; i+=(int)yInterval[2])
         {
-            if (i > 11000) break;
+            if (i > 6000) break;
             if (Random.Range(0f, 1f) > descendingProbability) continue; 
             var platform = Instantiate(platformPrefabs[2],
                 new Vector3(Random.Range(minX, maxX), _startY + i / 40, 0),

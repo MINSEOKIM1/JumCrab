@@ -6,6 +6,7 @@ using UnityEngine;
 public class DescendingPlatform : MonoBehaviour
 {
     public bool descending;
+    public bool init;
 
     public float descendingSpeed;
 

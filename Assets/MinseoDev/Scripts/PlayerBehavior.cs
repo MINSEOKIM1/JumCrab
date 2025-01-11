@@ -98,6 +98,10 @@ public class PlayerBehavior : MonoBehaviour
 
     public bool pause;
 
+    public bool isPoisoning;
+
+    public bool onSpiderWeb;
+
     public GameObject currentDescendingPlatform;
 
     private Vignette _vignette;
@@ -267,6 +271,31 @@ public class PlayerBehavior : MonoBehaviour
                     currentDescendingPlatform.layer = 8;
                     a.descending = true;
                 }
+                
+                if (hit.collider.GetComponent<CentipedePlatform>())
+                {
+                    if (!isPoisoning) StartCoroutine(Poisoning());
+                }
+                
+                if (hit.collider.GetComponent<MushroomPlatform>())
+                {
+                    if (!hit.collider.GetComponent<MushroomPlatform>().triggered) StartCoroutine(hit.collider.GetComponent<MushroomPlatform>().Trigger());
+                }
+                
+                if (hit.collider.GetComponent<LizardPlatform>())
+                {
+                    hit.collider.GetComponent<LizardPlatform>().Vanishing();
+                }
+                
+                if (hit.collider.GetComponent<SpiderPlatform>())
+                {
+                    var a = hit.collider.GetComponent<SpiderPlatform>();
+                    
+                    StartCoroutine(a.Descend());
+                    if (!a.init) StartCoroutine(OnSpiderWeb());
+                    
+                    a.init = true;
+                }
                 yield return new WaitForSeconds(groundCheckTime * 1.1f);
             }
             else
@@ -381,7 +410,7 @@ public class PlayerBehavior : MonoBehaviour
         float actualWallJumpPower = gettingHit ? wallJumpPower / 2 : wallJumpPower;
         if (_coyoteTimeElapsed > 0 || _isClimbing)
         {
-            if (_jumpTimeOutElapsed < 0 && _playerInput.jump)
+            if (_jumpTimeOutElapsed < 0 && _playerInput.jump && !onSpiderWeb)
             {
                 if (!_isClimbing)
                 {
@@ -507,6 +536,9 @@ public class PlayerBehavior : MonoBehaviour
                 _hp += boilingDOT * Time.deltaTime;
                 
                 // post-processing
+                
+                _vignette.color.Override(Color.red);
+                
                 if (_vignetteIncrease)
                 {
                     _vignetteIntensity += Time.deltaTime;
@@ -585,6 +617,7 @@ public class PlayerBehavior : MonoBehaviour
                 }
             }
 
+            _vignette.color.Override(Color.red);
             if (time < 0.3f)
             {
                 _vignette.intensity.Override(1f * time);
@@ -606,5 +639,46 @@ public class PlayerBehavior : MonoBehaviour
                 sprite.color = Color.white;
             }
         }
+    }
+
+    IEnumerator Poisoning()
+    {
+        float realTime = 0;
+        
+        float time = 0;
+
+        isPoisoning = true;
+        while (realTime < 3)
+        {
+            _vignette.color.Override(Color.green);
+            if (time < 0.3f)
+            {
+                _vignette.intensity.Override(1f * time);
+            }
+            else if (time < 0.6f)
+            {
+                _vignette.intensity.Override(1 * (0.6f - time));
+            }
+            else
+            {
+                time = 0;
+            }
+
+            time += Time.deltaTime;
+            realTime += Time.deltaTime;
+
+            _hp += 3 * Time.deltaTime;
+            
+            yield return null;
+        }
+        isPoisoning = false;
+        _vignette.intensity.Override(0);
+    }
+
+    IEnumerator OnSpiderWeb()
+    {
+        onSpiderWeb = true;
+        yield return new WaitForSeconds(2f);
+        onSpiderWeb = false;
     }
 }
