@@ -31,18 +31,23 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject restartButton;
     [SerializeField] private GameObject homeButton;
     [SerializeField] private GameObject soundManager;
-    
-    
+
+
+
+    [SerializeField] private GameObject comicGameObject;
     BGM bgm;
     private Coroutine playGame;
     private int eh = 1;
+    private bool isComic = true;
     void Start()
     {
         GameState = gameState.Title;
+        comicGameObject.gameObject.SetActive(false);
         titleUI = TitleCanvas.GetComponent<TitleUI>();
         stopUI = StopCanvas.GetComponent<StopUI>();
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
         bgm = soundManager.GetComponent<BGM>();
+        
         bgm.startTitleBGM();
     }
 
@@ -80,6 +85,13 @@ public class UIManager : MonoBehaviour
     
     public void StartGame()
     {
+        if (!titleUI.isPlayerNewbie && isComic == true)
+        {
+            comicGameObject.gameObject.SetActive(true);
+            isComic = false;
+            return;
+        }
+        
         if (!titleUI.isPlayerNewbie) //if player is not Newbie
         {
             //merge

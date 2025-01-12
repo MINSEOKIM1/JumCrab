@@ -21,6 +21,7 @@ public class TitleUI : MonoBehaviour
     // 0 : start, 1 : setting, 2: guide, 3: exit 
     [SerializeField] private GameObject backGround;
     public bool isPlayerNewbie { get; set; }
+    public bool isComicshowed { get; set; }
     private bool startguidePressed;
     
     #endregion
@@ -45,15 +46,20 @@ public class TitleUI : MonoBehaviour
     #region Method
     public void Titleinit()
     {
+        
         for(int i = 0; i < titleButton.Length; i++)
         {
             titleButton[i].gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
         }
-        backGround.gameObject.SetActive(true);
-        optionCanvas.gameObject.SetActive(true);
         settingCanvas.gameObject.SetActive(false);
         guideCanvas.gameObject.SetActive(false);
         Backbutton.gameObject.SetActive(false);
+        if (startguidePressed == true)
+        {
+            return;
+        }
+        backGround.gameObject.SetActive(true);
+        optionCanvas.gameObject.SetActive(true);
     }
     
     public void StartButtonPressed()   
