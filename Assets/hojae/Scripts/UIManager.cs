@@ -41,6 +41,8 @@ public class UIManager : MonoBehaviour
     private bool isComic = true;
     void Start()
     {
+        isComic = DataManager.Instance.isComic;
+        
         GameState = gameState.Title;
         comicGameObject.gameObject.SetActive(false);
         titleUI = TitleCanvas.GetComponent<TitleUI>();
@@ -89,13 +91,14 @@ public class UIManager : MonoBehaviour
         {
             comicGameObject.gameObject.SetActive(true);
             isComic = false;
+            DataManager.Instance.isComic = false;
             return;
         }
         
         if (!titleUI.isPlayerNewbie) //if player is not Newbie
         {
             //merge
-            SceneManager.LoadScene("hojae/MinseoDevScene0");
+            SceneManager.LoadScene("hojae/MinseoDevScene0", LoadSceneMode.Single);
             /*
             Time.timeScale = 1;
             GameState = gameState.Play; //game start

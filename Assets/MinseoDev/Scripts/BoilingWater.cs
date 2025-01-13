@@ -9,8 +9,11 @@ public class BoilingWater : MonoBehaviour
     [SerializeField] private float initialDamage;
     [SerializeField] private float dotDamage;
 
+    public PlayerBehavior player;
+
     private void Update()
     {
+        if (!player.clear  && !player.die)
         transform.localScale += Vector3.up * upwardSpeed * Time.deltaTime;
     }
 

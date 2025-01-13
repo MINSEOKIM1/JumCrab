@@ -10,9 +10,16 @@ public class DataManager : MonoBehaviour
 
     public float BGMVolume { get; set; }
     public float SFXVolume { get; set; }
+
+    public bool clear;
+
+
+    public bool isNewbie = true;
+    public bool isComic = true;
     
     private void Awake()
     {
+        
         if(Instance != null && Instance != this)
         {
             Destroy(this);

@@ -14,6 +14,10 @@ public class HeighEstimate : MonoBehaviour
     private float _startOffsetY;
     private float _timeElapsed = 0.1f;
 
+    public BGM bgm;
+
+    public bool change;
+
     private void Start()
     {
         _startOffsetY = player.position.y;
@@ -26,5 +30,16 @@ public class HeighEstimate : MonoBehaviour
         currentHeight = Mathf.Clamp(Mathf.Round((player.position.y - _startOffsetY) * 40), 0, Mathf.Infinity);
         float hpt = currentHeight / _timeElapsed;
         text.text = "Height : " + currentHeight;
+
+        if (!change)
+        {
+            if (currentHeight > 6000)
+            {
+                StartCoroutine(bgm.BgmFadeInOut());
+                change = true;
+            }
+        }
     }
+    
+    
 }

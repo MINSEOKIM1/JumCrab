@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Searcher;
+
+
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -31,7 +31,7 @@ public class TitleUI : MonoBehaviour
     void Start()
     {
         guideUI = guideCanvas.GetComponent<GuideUI>();
-        isPlayerNewbie = true;
+        isPlayerNewbie = DataManager.Instance.isNewbie;
         Titleinit();
     }
 
@@ -98,6 +98,7 @@ public class TitleUI : MonoBehaviour
     public void maturePlayer()
     {
         isPlayerNewbie = false;
+        DataManager.Instance.isNewbie = false;
         if (startguidePressed == true)
         {
             GetComponentInParent<UIManager>().StartGame();

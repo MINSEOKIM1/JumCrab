@@ -17,10 +17,23 @@ public class BGM : MonoBehaviour
     
     [Header("BGM")]
     [SerializeField] private AudioClip TitleBGMClip;
+    [SerializeField] private AudioClip phase2BGM;
+    [SerializeField] private AudioClip clearBGM;
+    [SerializeField] private AudioClip failBGM;
     
     [Header("SFX")]
     [SerializeField] private AudioClip OnButtonClip;
     [SerializeField] private AudioClip ClickButtonClip;
+    [SerializeField] private AudioClip ScoopWarning;
+    [SerializeField] private AudioClip Jump;
+    [SerializeField] private AudioClip ScoopItemDrop;
+    [SerializeField] private AudioClip Diving;
+    [SerializeField] private AudioClip ScoopSwing;
+    [SerializeField] private AudioClip Warning;
+
+    [SerializeField] private AudioClip[] clips;
+
+    public float fadeinout = 1f;
     
     void Start()
     {
@@ -33,8 +46,69 @@ public class BGM : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        BGMPlayer.volume = DataManager.Instance.BGMVolume * fadeinout;
     }
+
+    public IEnumerator BgmFadeInOut()
+    {
+        float time = 0;
+
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            fadeinout = 1 - time;
+            yield return null;
+        }
+
+        BGMPlayer.clip = phase2BGM;
+        BGMPlayer.Play();
+        
+        time = 0;
+
+        while (time < 1)
+        {
+            time += Time.deltaTime;
+            fadeinout = time;
+            yield return null;
+        }
+    }
+    
+    public IEnumerator Clear()
+    {
+        float time = 0;
+
+        while (time < 1.5f)
+        {
+            time += Time.deltaTime;
+            fadeinout = (1.5f - time) / 1.5f;
+            yield return null;
+        }
+
+        BGMPlayer.clip = clearBGM;
+        BGMPlayer.loop = false;
+        BGMPlayer.Play();
+
+        fadeinout = 1;
+    }
+    
+    public IEnumerator Die()
+    {
+        float time = 0;
+
+        while (time < 1.5f)
+        {
+            time += Time.deltaTime;
+            fadeinout = 1 - time;
+            yield return null;
+        }
+
+        BGMPlayer.clip = failBGM;
+        BGMPlayer.loop = false;
+        BGMPlayer.Play();
+
+        fadeinout = 1;
+    }
+
     
     public void startTitleBGM()
     {
@@ -52,5 +126,10 @@ public class BGM : MonoBehaviour
     {
         SFXPlayer.clip = ClickButtonClip;
         SFXPlayer.PlayOneShot(ClickButtonClip);
+    }
+    
+    public void PlaySFX(int n)
+    {
+        SFXPlayer.PlayOneShot(clips[n]);
     }
 }

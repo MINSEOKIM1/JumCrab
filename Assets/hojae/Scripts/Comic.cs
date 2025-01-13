@@ -12,6 +12,8 @@ public class Comic : MonoBehaviour
     [SerializeField] RectTransform content;
     [SerializeField] float scrollSpeed;
 
+    public Image fade;
+
     [SerializeField] private float time = 2f;
     private bool a, b;
     
@@ -23,25 +25,28 @@ public class Comic : MonoBehaviour
     private void Update()
     {
         time -= Time.deltaTime;
-        Debug.Log(time);
         
         if (time < 0 && !a)
-        {Debug.Log("?!?!!?!?!?!");
+        {
             StartCoroutine(AutoScroll());
             a = true;
         }
 
-        if(content.anchoredPosition.y >= 1700 && !b){
-            Debug.Log("@@@");
+        if(scrollRect.verticalNormalizedPosition < 0.01f && !b){
             time = 2f;
             b = true;
+        }
+
+        if (b)
+        {
+            fade.gameObject.SetActive(true);
+            fade.color = new Color(0, 0, 0, (2 - time) / 2);
         }
         
         if (time < 0 && b)
         {
             s();
         }
-
     }
 
     private IEnumerator AutoScroll()
@@ -49,7 +54,7 @@ public class Comic : MonoBehaviour
         scrollRect.verticalNormalizedPosition = 1f;
         while (true)
         {
-            scrollRect.verticalNormalizedPosition -= scrollSpeed;
+            if (scrollRect.verticalNormalizedPosition > 0f) scrollRect.verticalNormalizedPosition -= scrollSpeed * Time.deltaTime;
             yield return null;
         }
     }
@@ -57,7 +62,7 @@ public class Comic : MonoBehaviour
 
     private void s()
     {
-        SceneManager.LoadScene("hojae/MinseoDevScene0");
+        SceneManager.LoadScene("hojae/MinseoDevScene0", LoadSceneMode.Single);
     }
     /*private IEnumerator waitFortime()
     {

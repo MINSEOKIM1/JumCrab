@@ -7,6 +7,8 @@ using Random = UnityEngine.Random;
 
 public class ItemSpawner : MonoBehaviour
 {
+    public BGM bgm;
+    
     public GameObject climbRestoreItem;
     public GameObject goldPowder;
 
@@ -21,11 +23,15 @@ public class ItemSpawner : MonoBehaviour
     public float targetHeightForEscalating;
     public float currentTargetForEscalating;
 
+    public Transform player;
+
     public RectTransform warningMessage;
     
 
     public Transform cameraPosition;
     public Vector3 cameraOffset;
+
+    private bool esc;
 
     private void Start()
     {
@@ -67,8 +73,9 @@ public class ItemSpawner : MonoBehaviour
         }
         
         // 물차기 이벤트
-        if (heighEstimate.currentHeight > currentTargetForEscalating)
+        if (player.transform.position.y - waterSurface.transform.position.y > 20 && esc == false)
         {
+            esc = true;
             currentTargetForEscalating += targetHeightForEscalating;
 
             StartCoroutine(EscalateWater());
@@ -89,9 +96,11 @@ public class ItemSpawner : MonoBehaviour
 
     private IEnumerator EscalateWater()
     {
+        bgm.PlaySFX(5);
         float time0 = 0;
         while (time0 < 2)
         {
+            
             warningMessage.gameObject.SetActive(true);
             
             time0 += Time.deltaTime;
@@ -105,12 +114,14 @@ public class ItemSpawner : MonoBehaviour
         int a = 0;
         while (waterSurface.position.y < cameraPosition.position.y - 5)
         {
-            cameraPosition.position += Vector3.right * (a < 2 ? 1 : -1) * Time.deltaTime;
+            cameraPosition.position += Vector3.right * (a < 2 ? 6 : -6) * Time.deltaTime;
             boilingWater.upwardSpeed = 16;
             yield return null;
             a++;
             if (a == 4) a = 0;
         }
+
+        esc = false;
         
         boilingWater.upwardSpeed = original;
     }

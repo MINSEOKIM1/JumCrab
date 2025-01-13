@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -58,6 +57,8 @@ public class PlayerBehavior : MonoBehaviour
 
     [SerializeField] private Camera camera;
 
+    public BGM audiomanager;
+    
     [Header("CLIMB GAUGE")] [SerializeField]
     private float maxClimbGauge;
 
@@ -130,6 +131,7 @@ public class PlayerBehavior : MonoBehaviour
 
     private void Start()
     {
+        Time.fixedDeltaTime = 0.02f;
         _collider = GetComponent<CapsuleCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInputManager>();
@@ -150,7 +152,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public void GoBackToTitle()
     {
-        SceneManager.LoadScene("hojae/hojae");
+        SceneManager.LoadScene("hojae/hojae", LoadSceneMode.Single);
     }
 
     private void FixedUpdate()
@@ -163,7 +165,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene("hojae/MinseoDevScene0");
+        SceneManager.LoadScene("hojae/MinseoDevScene0", LoadSceneMode.Single);
     }
 
     private void Update()
@@ -224,6 +226,7 @@ public class PlayerBehavior : MonoBehaviour
 
         if (_hp >= maxHp && !die)
         {
+            StartCoroutine(audiomanager.Die());
             // JUMP!
             _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0);
             _isClimbing = false;
@@ -308,6 +311,7 @@ public class PlayerBehavior : MonoBehaviour
                 _rigidbody.AddForce(new Vector2(0, 8f), ForceMode2D.Impulse);
                 clear = true;
                 StartCoroutine(Clear());
+                StartCoroutine(audiomanager.Clear());
             }
         }
     }
@@ -408,6 +412,7 @@ public class PlayerBehavior : MonoBehaviour
                 if (hit.collider.GetComponent<CentipedePlatform>())
                 {
                     if (!isPoisoning) StartCoroutine(Poisoning());
+                    hit.collider.GetComponent<CentipedePlatform>().animator.SetTrigger("tr");
                 }
                 
                 if (hit.collider.GetComponent<MushroomPlatform>())
@@ -547,6 +552,7 @@ public class PlayerBehavior : MonoBehaviour
         {
             if (_jumpTimeOutElapsed < 0 && _playerInput.jump && !onSpiderWeb)
             {
+                audiomanager.PlaySFX(1);
                 if (!_isClimbing)
                 {
                     _jumpTimeOutElapsed = jumpTimeOut;
@@ -582,6 +588,7 @@ public class PlayerBehavior : MonoBehaviour
 
     public void Jump(float power)
     {
+        audiomanager.PlaySFX(1);
         if (!_isClimbing)
         {
             _jumpTimeOutElapsed = jumpTimeOut;
@@ -639,6 +646,8 @@ public class PlayerBehavior : MonoBehaviour
         climbFillImage.color = _climbGuage / maxClimbGauge < 0.3f ? Color.red : Color.green;
     }
 
+    public ItemSpawner itemSpawn;
+
     private void DamageCheck()
     {
         if (clear) return;
@@ -646,8 +655,10 @@ public class PlayerBehavior : MonoBehaviour
         {
             if (_getHitInitially)
             {
+                
                 if (_noDamageTimeElapsed < 0)
-                {
+                {audiomanager.PlaySFX(3);
+                    itemSpawn.SpawnGoldPowder(2);
                     _hp += boilingInitialDamage;
                     _getHitInitially = false;
                     _noDamageTimeElapsed = noDamageTime;
@@ -790,11 +801,11 @@ public class PlayerBehavior : MonoBehaviour
             _vignette.color.Override(Color.green);
             if (time < 0.3f)
             {
-                _vignette.intensity.Override(1f * time);
+                _vignette.intensity.Override(1f * time * 1.3f);
             }
             else if (time < 0.6f)
             {
-                _vignette.intensity.Override(1 * (0.6f - time));
+                _vignette.intensity.Override(1 * (0.6f - time) * 1.3f);
             }
             else
             {

@@ -8,7 +8,7 @@ public class backGround : MonoBehaviour
     #region Field
     [Header("Image")]
     [SerializeField] private GameObject basic;
-    [SerializeField] private GameObject filter;
+    //[SerializeField] private GameObject filter;
     public float flickvalue;
     
     [Header("small")]
@@ -25,7 +25,7 @@ public class backGround : MonoBehaviour
     #region LifeCycle
     void Start()
     {
-        StartCoroutine(BlinkImage(filter));
+        //StartCoroutine(BlinkImage(filter));
         StartCoroutine(ShakeImage(smallItem, smallshakeRange, smallshakeSpeed));
         StartCoroutine(ShakeImage(bigItem, bigshakeRange, bigshakeSpeed));
     }
